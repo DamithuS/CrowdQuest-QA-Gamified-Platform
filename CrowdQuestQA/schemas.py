@@ -35,6 +35,7 @@ class UserPublic(BaseModel):
     id: int
     username: str
     avatar_color: str
+    avatar_url: Optional[str] = None
     points: int
     level: int
 
