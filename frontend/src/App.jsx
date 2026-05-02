@@ -5,6 +5,7 @@ import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import MySubmissionsPage from './pages/MySubmissionsPage'
+import SubmitBugPage from './pages/SubmitBugPage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/dashboard"       element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/profile"         element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       <Route path="/my-submissions"  element={<ProtectedRoute><MySubmissionsPage /></ProtectedRoute>} />
+      <Route path="/submit-bug"      element={<ProtectedRoute><SubmitBugPage /></ProtectedRoute>} />
     </Routes>
   )
 }
