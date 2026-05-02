@@ -250,7 +250,7 @@ export default function MySubmissionsPage() {
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }}>
                     <circle cx="11" cy="11" r="8"/><path d="m21 21-3.5-3.5"/>
                   </svg>
-                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search reports…" style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 7, paddingBottom: 7, border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none', width: 200 }} />
+                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search reports" style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 7, paddingBottom: 7, border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', outline: 'none', width: 200 }} />
                 </div>
               </div>
             </div>

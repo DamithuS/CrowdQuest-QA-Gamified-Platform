@@ -95,7 +95,7 @@ export default function SubmitBugPage() {
 
   const [form, setForm] = useState({
     title: '', description: '', steps_to_reproduce: '',
-    severity: 'medium', environment: '', device_browser: '', version: '', screenshot_url: '',
+    severity: '', environment: '', device_browser: '', version: '', screenshot_url: '',
   })
   const [errors, setErrors]         = useState({})
   const [submitting, setSubmitting] = useState(false)
@@ -117,6 +117,8 @@ export default function SubmitBugPage() {
       e.description = 'Description must be at least 20 characters.'
     if (!form.steps_to_reproduce.trim() || form.steps_to_reproduce.trim().length < 10)
       e.steps_to_reproduce = 'Steps must be at least 10 characters.'
+    if (!form.severity)
+      e.severity = 'Use AI Detect to classify the severity before submitting.'
     return e
   }
 
@@ -157,7 +159,7 @@ export default function SubmitBugPage() {
   }
 
   function resetForm() {
-    setForm({ title: '', description: '', steps_to_reproduce: '', severity: 'medium', environment: '', device_browser: '', version: '', screenshot_url: '' })
+    setForm({ title: '', description: '', steps_to_reproduce: '', severity: '', environment: '', device_browser: '', version: '', screenshot_url: '' })
     setErrors({})
     setSubmitted(null)
     setApiError('')
@@ -250,7 +252,7 @@ export default function SubmitBugPage() {
                       value={form.description}
                       onChange={e => set('description', e.target.value)}
                       rows={4}
-                      placeholder="Describe the bug in detail — what happened vs. what you expected…"
+                      placeholder="Describe the bug in detail — what happened vs. what you expected"
                       style={{ ...inputStyle(!!errors.description), resize: 'vertical' }}
                       onFocus={e => e.target.style.borderColor = '#4338CA'}
                       onBlur={e => e.target.style.borderColor = errors.description ? '#fca5a5' : '#e5e7eb'}
@@ -311,7 +313,7 @@ export default function SubmitBugPage() {
                       <input
                         value={form.screenshot_url}
                         onChange={e => set('screenshot_url', e.target.value)}
-                        placeholder="https://…"
+                        placeholder="https://"
                         style={inputStyle(false)}
                         onFocus={e => e.target.style.borderColor = '#4338CA'}
                         onBlur={e => e.target.style.borderColor = '#e5e7eb'}
@@ -405,6 +407,9 @@ export default function SubmitBugPage() {
                           {aiSuggestion.reasoning}
                         </p>
                       </div>
+                    )}
+                    {errors.severity && (
+                      <p style={{ fontSize: 12, color: '#dc2626', margin: '10px 0 0' }}>{errors.severity}</p>
                     )}
                   </div>
 
