@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import ProfilePage from './pages/ProfilePage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import MySubmissionsPage from './pages/MySubmissionsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 export default function App() {
@@ -14,8 +15,9 @@ export default function App() {
       <Route path="/register" element={<LoginPage />} />
       <Route path="/leaderboard" element={<LeaderboardPage />} />
 
-      <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-      <Route path="/profile"   element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/dashboard"       element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+      <Route path="/profile"         element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/my-submissions"  element={<ProtectedRoute><MySubmissionsPage /></ProtectedRoute>} />
     </Routes>
   )
 }
