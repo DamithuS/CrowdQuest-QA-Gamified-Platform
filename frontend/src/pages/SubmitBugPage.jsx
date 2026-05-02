@@ -97,10 +97,12 @@ export default function SubmitBugPage() {
     title: '', description: '', steps_to_reproduce: '',
     severity: 'medium', environment: '', device_browser: '', version: '', screenshot_url: '',
   })
-  const [errors, setErrors]     = useState({})
+  const [errors, setErrors]         = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted]   = useState(null)
   const [apiError, setApiError]     = useState('')
+  const [aiDetecting, setAiDetecting]   = useState(false)
+  const [aiSuggestion, setAiSuggestion] = useState(null)
 
   function set(field, value) {
     setForm(f => ({ ...f, [field]: value }))
@@ -159,10 +161,41 @@ export default function SubmitBugPage() {
     setErrors({})
     setSubmitted(null)
     setApiError('')
+    setAiSuggestion(null)
+  }
+
+  async function detectSeverity() {
+    if (!form.title.trim() || !form.description.trim() || !form.steps_to_reproduce.trim()) {
+      setApiError('Please fill in the title, description, and steps before using AI detection.')
+      return
+    }
+    setAiDetecting(true)
+    setAiSuggestion(null)
+    setApiError('')
+    try {
+      const res = await fetch(`${API}/ai/detect-severity`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title.trim(),
+          description: form.description.trim(),
+          steps_to_reproduce: form.steps_to_reproduce.trim(),
+        }),
+      })
+      if (!res.ok) throw new Error('AI detection failed')
+      const data = await res.json()
+      setAiSuggestion(data)
+      set('severity', data.severity)
+    } catch {
+      setApiError('AI detection failed. Please try again or set severity manually.')
+    } finally {
+      setAiDetecting(false)
+    }
   }
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#F8F9FF', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -292,26 +325,60 @@ export default function SubmitBugPage() {
 
                   {/* Severity picker */}
                   <div style={{ background: '#fff', borderRadius: 16, padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
-                    <h2 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 16px' }}>
-                      Severity <span style={{ color: '#dc2626' }}>*</span>
-                    </h2>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                      <h2 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: 0 }}>
+                        Severity <span style={{ color: '#dc2626' }}>*</span>
+                      </h2>
+                      <button
+                        type="button"
+                        onClick={detectSeverity}
+                        disabled={aiDetecting}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 6,
+                          padding: '6px 12px', borderRadius: 8, cursor: aiDetecting ? 'not-allowed' : 'pointer',
+                          border: '1.5px solid #4338CA', background: aiDetecting ? '#EEF2FF' : '#4338CA',
+                          fontSize: 12, fontWeight: 600, color: aiDetecting ? '#4338CA' : '#fff',
+                          fontFamily: 'inherit', transition: 'all 0.15s',
+                        }}
+                      >
+                        {aiDetecting ? (
+                          <>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'spin 1s linear infinite' }}>
+                              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                            </svg>
+                            Detecting…
+                          </>
+                        ) : (
+                          <>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                              <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                            </svg>
+                            AI Detect
+                          </>
+                        )}
+                      </button>
+                    </div>
+
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {SEVERITY_OPTIONS.map(opt => (
-                        <button
+                        <div
                           key={opt.value}
-                          type="button"
-                          onClick={() => set('severity', opt.value)}
                           style={{
                             display: 'flex', alignItems: 'center', gap: 12,
-                            padding: '12px 14px', borderRadius: 10, cursor: 'pointer', textAlign: 'left',
+                            padding: '12px 14px', borderRadius: 10, textAlign: 'left',
                             border: `2px solid ${form.severity === opt.value ? opt.border : '#e5e7eb'}`,
                             background: form.severity === opt.value ? opt.bg : '#fff',
-                            transition: 'all 0.15s', fontFamily: 'inherit',
+                            transition: 'all 0.15s',
                           }}
                         >
                           <div style={{ width: 10, height: 10, borderRadius: '50%', background: opt.color, flexShrink: 0 }} />
                           <div>
-                            <p style={{ fontSize: 13, fontWeight: 700, color: form.severity === opt.value ? opt.color : '#374151', margin: 0 }}>{opt.label}</p>
+                            <p style={{ fontSize: 13, fontWeight: 700, color: form.severity === opt.value ? opt.color : '#374151', margin: 0 }}>
+                              {opt.label}
+                              {aiSuggestion?.severity === opt.value && (
+                                <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, color: '#4338CA', background: '#EEF2FF', padding: '1px 6px', borderRadius: 20 }}>AI</span>
+                              )}
+                            </p>
                             <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>{opt.desc}</p>
                           </div>
                           {form.severity === opt.value && (
@@ -319,9 +386,26 @@ export default function SubmitBugPage() {
                               <polyline points="20 6 9 17 4 12"/>
                             </svg>
                           )}
-                        </button>
+                        </div>
                       ))}
                     </div>
+
+                    {/* AI suggestion reasoning */}
+                    {aiSuggestion && (
+                      <div style={{ marginTop: 14, padding: '12px 14px', background: '#EEF2FF', borderRadius: 10, borderLeft: '3px solid #4338CA' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2.5" strokeLinecap="round">
+                            <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                          </svg>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#4338CA' }}>
+                            AI Suggestion · Confidence: {aiSuggestion.confidence}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: 12, color: '#3730a3', margin: 0, lineHeight: 1.5 }}>
+                          {aiSuggestion.reasoning}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Points info */}

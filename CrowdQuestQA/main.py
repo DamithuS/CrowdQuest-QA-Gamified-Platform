@@ -7,7 +7,9 @@ from typing import Optional
 import hashlib
 import shutil
 import uuid
+import json
 from pathlib import Path
+import anthropic
 
 from database import get_db
 from models import User, BugReport, Badge, UserBadge, Notification, StatusEnum
@@ -17,13 +19,13 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 from schemas import (
     UserCreate, UserUpdate, UserOut, UserPublic,
     LoginRequest, BugReportCreate, BugReportOut, BugReportStatusUpdate,
-    NotificationOut, LeaderboardEntry,
+    NotificationOut, LeaderboardEntry, SeverityDetectRequest,
 )
 
 app = FastAPI(
     title="CrowdQuestQA API_v3",
     description="Crowdsourced QA Gamification Platform",
-    version="2.0.0",
+    version="3.0.0",
 )
 
 app.add_middleware(
@@ -35,6 +37,21 @@ app.add_middleware(
 )
 
 app.mount("/uploads", StaticFiles(directory=Path(__file__).parent / "uploads"), name="uploads")
+
+# ── AI Client ─────────────────────────────────────────────────────────────────
+
+ai_client = anthropic.AsyncAnthropic()
+
+SEVERITY_SYSTEM_PROMPT = """You are an expert software QA engineer specializing in bug severity classification.
+
+Given a bug report (title, description, and reproduction steps), classify the severity as exactly one of:
+- low: Minor cosmetic issues, typos, trivial UI glitches with no functional impact
+- medium: Functional issues with a workaround available, affects non-critical features
+- high: Significant functional impact, no workaround, affects core features or many users
+- critical: System crashes, data loss, security vulnerabilities, complete feature failure
+
+Respond with ONLY a valid JSON object — no markdown, no explanation outside the JSON:
+{"severity": "<low|medium|high|critical>", "reasoning": "<1-2 sentence explanation>", "confidence": "<low|medium|high>"}"""
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -285,3 +302,35 @@ async def mark_all_read(user_id: int, db: AsyncSession = Depends(get_db)):
         n.is_read = True
     await db.commit()
     return {"message": "All notifications marked as read"}
+
+
+# ── AI ────────────────────────────────────────────────────────────────────────
+
+@app.post("/ai/detect-severity")
+async def detect_severity(payload: SeverityDetectRequest):
+    try:
+        response = await ai_client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=256,
+            system=[{
+                "type": "text",
+                "text": SEVERITY_SYSTEM_PROMPT,
+                "cache_control": {"type": "ephemeral"},
+            }],
+            messages=[{
+                "role": "user",
+                "content": (
+                    f"Title: {payload.title}\n"
+                    f"Description: {payload.description}\n"
+                    f"Steps to reproduce: {payload.steps_to_reproduce}"
+                ),
+            }],
+        )
+        result = json.loads(response.content[0].text)
+        if result.get("severity") not in ("low", "medium", "high", "critical"):
+            raise ValueError("Invalid severity value")
+        return result
+    except (json.JSONDecodeError, ValueError):
+        raise HTTPException(status_code=500, detail="AI returned an unexpected response format")
+    except anthropic.APIError as e:
+        raise HTTPException(status_code=502, detail=f"AI service error: {e.message}")

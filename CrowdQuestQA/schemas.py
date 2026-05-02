@@ -110,6 +110,13 @@ class LeaderboardEntry(BaseModel):
     model_config = {"from_attributes": True}
 
 
+# ── AI Severity Detection ─────────────────────────────────────────────────────
+class SeverityDetectRequest(BaseModel):
+    title: str
+    description: str
+    steps_to_reproduce: str
+
+
 # ── Notification ──────────────────────────────────────────────────────────────
 class NotificationOut(BaseModel):
     id: int
