@@ -170,13 +170,31 @@ export default function LeaderboardPage() {
         </div>
 
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
-            <p style={{ fontSize: 14, color: '#9ca3af' }}>Loading leaderboard…</p>
+          <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', borderBottom: '1px solid #f3f4f6' }}>
+                <div style={{ width: 28, height: 11, background: '#f3f4f6', borderRadius: 6, flexShrink: 0 }} />
+                <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#f3f4f6', flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ height: 12, background: '#f3f4f6', borderRadius: 6, marginBottom: 6, width: `${30 + i * 7}%` }} />
+                  <div style={{ height: 9, background: '#f3f4f6', borderRadius: 6, width: '15%' }} />
+                </div>
+                <div style={{ width: 48, height: 12, background: '#f3f4f6', borderRadius: 6 }} />
+                <div style={{ width: 36, height: 12, background: '#f3f4f6', borderRadius: 6 }} />
+                <div style={{ width: 36, height: 12, background: '#f3f4f6', borderRadius: 6 }} />
+                <div style={{ width: 60, height: 6, background: '#f3f4f6', borderRadius: 6 }} />
+              </div>
+            ))}
           </div>
         ) : leaderboard.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
-            <span style={{ fontSize: 48 }}>🏆</span>
-            <p style={{ fontSize: 16, color: '#6b7280', marginTop: 12 }}>No entries yet. Be the first!</p>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 6px' }}>No rankings yet</p>
+            <p style={{ fontSize: 13, color: '#9ca3af', margin: 0 }}>Rankings will appear once bug reports have been submitted and reviewed.</p>
           </div>
         ) : (
           <>

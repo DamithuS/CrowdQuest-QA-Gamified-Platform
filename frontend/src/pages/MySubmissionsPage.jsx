@@ -259,7 +259,21 @@ export default function MySubmissionsPage() {
           {/* Table */}
           <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
             {loading ? (
-              <p style={{ fontSize: 13, color: '#9ca3af', padding: '40px', textAlign: 'center' }}>Loading…</p>
+              <div>
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: '1px solid #f3f4f6' }}>
+                    <div style={{ width: 36, height: 11, background: '#f3f4f6', borderRadius: 6, flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ height: 12, background: '#f3f4f6', borderRadius: 6, marginBottom: 6, width: `${40 + i * 10}%` }} />
+                      <div style={{ height: 9, background: '#f3f4f6', borderRadius: 6, width: '20%' }} />
+                    </div>
+                    <div style={{ width: 52, height: 20, background: '#f3f4f6', borderRadius: 20 }} />
+                    <div style={{ width: 64, height: 20, background: '#f3f4f6', borderRadius: 20 }} />
+                    <div style={{ width: 38, height: 11, background: '#f3f4f6', borderRadius: 6 }} />
+                    <div style={{ width: 42, height: 11, background: '#f3f4f6', borderRadius: 6 }} />
+                  </div>
+                ))}
+              </div>
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 0' }}>
                 <span style={{ fontSize: 40 }}>🐛</span>

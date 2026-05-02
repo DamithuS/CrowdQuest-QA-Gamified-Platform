@@ -218,9 +218,30 @@ export default function DashboardPage() {
                 <Link to="/my-submissions" style={{ fontSize: 13, color: '#4F46E5', fontWeight: 600, textDecoration: 'none' }}>View All &rsaquo;</Link>
               </div>
               {loading ? (
-                <p style={{ fontSize: 13, color: '#9ca3af', padding: '20px 0' }}>Loading…</p>
+                <div style={{ paddingTop: 8 }}>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 0', borderBottom: '1px solid #f9fafb' }}>
+                      <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#f3f4f6', flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ height: 11, background: '#f3f4f6', borderRadius: 6, marginBottom: 7, width: `${55 + i * 10}%` }} />
+                        <div style={{ height: 9, background: '#f3f4f6', borderRadius: 6, width: `${35 + i * 5}%` }} />
+                      </div>
+                      <div style={{ width: 32, height: 9, background: '#f3f4f6', borderRadius: 6 }} />
+                    </div>
+                  ))}
+                </div>
               ) : recentActivity.length === 0 ? (
-                <p style={{ fontSize: 13, color: '#9ca3af', padding: '20px 0' }}>No submissions yet. Submit your first bug!</p>
+                <div style={{ textAlign: 'center', padding: '36px 0' }}>
+                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2" strokeLinecap="round">
+                      <path d="M8 2l1.5 1.5"/><path d="M14.5 3.5L16 2"/>
+                      <path d="M9 7.5C9 5.6 10.3 4 12 4s3 1.6 3 3.5"/>
+                      <rect x="9" y="7" width="6" height="13" rx="3"/>
+                    </svg>
+                  </div>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: '#374151', margin: '0 0 4px' }}>No activity yet</p>
+                  <p style={{ fontSize: 12, color: '#9ca3af', margin: 0 }}>Submit your first bug report to see it here.</p>
+                </div>
               ) : (
                 recentActivity.map(r => <ActivityRow key={r.id} report={r} />)
               )}
