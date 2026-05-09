@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File
+from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File, BackgroundTasks
+import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,9 +10,10 @@ import shutil
 import uuid
 import json
 from pathlib import Path
-import anthropic
+from groq import AsyncGroq
+import os
 
-from database import get_db
+from database import get_db, AsyncSessionLocal
 from models import User, BugReport, Badge, UserBadge, Notification, StatusEnum
 
 UPLOAD_DIR = Path(__file__).parent / "uploads" / "avatars"
@@ -40,9 +42,9 @@ app.mount("/uploads", StaticFiles(directory=Path(__file__).parent / "uploads"), 
 
 # ── AI Client ─────────────────────────────────────────────────────────────────
 
-ai_client = anthropic.AsyncAnthropic()
+groq_client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY"))
 
-SEVERITY_SYSTEM_PROMPT = """You are an expert software QA engineer specializing in bug severity classification.
+SEVERITY_PROMPT_TEMPLATE = """You are an expert software QA engineer specializing in bug severity classification.
 
 Given a bug report (title, description, and reproduction steps), classify the severity as exactly one of:
 - low: Minor cosmetic issues, typos, trivial UI glitches with no functional impact
@@ -51,7 +53,90 @@ Given a bug report (title, description, and reproduction steps), classify the se
 - critical: System crashes, data loss, security vulnerabilities, complete feature failure
 
 Respond with ONLY a valid JSON object — no markdown, no explanation outside the JSON:
-{"severity": "<low|medium|high|critical>", "reasoning": "<1-2 sentence explanation>", "confidence": "<low|medium|high>"}"""
+{{"severity": "<low|medium|high|critical>", "reasoning": "<1-2 sentence explanation>", "confidence": "<low|medium|high>"}}
+
+Title: {title}
+Description: {description}
+Steps to reproduce: {steps}"""
+
+QUALITY_PROMPT_TEMPLATE = """You are a senior QA engineer reviewing a bug report submission.
+
+Score this report from 0.0 to 10.0 and assign a status:
+- accepted (score >= 7.0): Clear title, detailed description, complete reproducible steps
+- under_review (score 4.0–6.9): Decent report but missing some detail
+- rejected (score < 4.0): Too vague, missing steps, or not a real bug
+
+Respond with ONLY valid JSON — no markdown, no explanation outside the JSON:
+{{"quality_score": <0.0-10.0>, "status": "<accepted|under_review|rejected>", "feedback": "<one sentence>"}}
+
+Title: {title}
+Description: {description}
+Steps to reproduce: {steps}
+Severity: {severity}"""
+
+async def auto_review_report(report_id: int):
+    await asyncio.sleep(30)
+    async with AsyncSessionLocal() as db:
+        report = await db.get(BugReport, report_id)
+        if not report or report.status != StatusEnum.pending:
+            return
+        try:
+            prompt = QUALITY_PROMPT_TEMPLATE.format(
+                title=report.title,
+                description=report.description,
+                steps=report.steps_to_reproduce,
+                severity=report.severity.value,
+            )
+            response = await groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=128,
+            )
+            text = response.choices[0].message.content.strip()
+            if text.startswith("```"):
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            result = json.loads(text.strip())
+            score = float(result.get("quality_score", 5.0))
+            new_status = result.get("status", "under_review")
+            if new_status not in ("accepted", "under_review", "rejected"):
+                new_status = "under_review"
+            new_status_enum = StatusEnum(new_status)
+            pts = POINTS_MAP.get(new_status_enum, 0)
+            await db.execute(
+                sql_update(BugReport).where(BugReport.id == report_id).values(
+                    status=new_status_enum,
+                    quality_score=round(score, 1),
+                    points_awarded=pts if pts else None,
+                )
+            )
+            if pts:
+                await db.execute(
+                    sql_update(User).where(User.id == report.submitted_by_id).values(
+                        points=User.points + pts,
+                        xp=User.xp + pts,
+                    )
+                )
+                user = await db.get(User, report.submitted_by_id)
+                if user:
+                    new_level = calculate_level(user.xp + pts)
+                    await db.execute(
+                        sql_update(User).where(User.id == report.submitted_by_id).values(level=new_level)
+                    )
+            notif_msg = f'Your report "{report.title[:50]}" was {new_status.replace("_", " ")}!'
+            if pts:
+                notif_msg += f' +{pts} points'
+            db.add(Notification(
+                user_id=report.submitted_by_id,
+                message=notif_msg,
+                type="success" if new_status == "accepted" else "info",
+            ))
+            await db.commit()
+        except Exception:
+            pass
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -118,26 +203,17 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
 
 @app.patch("/users/{user_id}", response_model=UserOut)
 async def update_user(user_id: int, payload: UserUpdate, db: AsyncSession = Depends(get_db)):
-    user = await db.get(User, user_id)
-    if not user:
+    exists = await db.scalar(select(User).where(User.id == user_id))
+    if not exists:
         raise HTTPException(status_code=404, detail="User not found")
-    data = {f: getattr(payload, f) for f in payload.model_fields_set}
+    data = {f: getattr(payload, f) for f in payload.model_fields_set if f != "remove_avatar"}
+    if payload.remove_avatar:
+        data["avatar_url"] = None
     if data:
         await db.execute(sql_update(User).where(User.id == user_id).values(**data))
         await db.commit()
-    await db.refresh(user)
-    return user
-
-
-@app.delete("/users/{user_id}/avatar", response_model=UserOut)
-async def delete_avatar(user_id: int, db: AsyncSession = Depends(get_db)):
-    user = await db.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    await db.execute(sql_update(User).where(User.id == user_id).values(avatar_url=None))
-    await db.commit()
-    await db.refresh(user)
-    return user
+    result = await db.execute(select(User).where(User.id == user_id))
+    return result.scalar_one()
 
 
 @app.post("/users/{user_id}/avatar", response_model=UserOut)
@@ -169,7 +245,7 @@ async def upload_avatar(
 # ── Bug Reports ───────────────────────────────────────────────────────────────
 
 @app.post("/reports", response_model=BugReportOut, status_code=status.HTTP_201_CREATED)
-async def submit_report(payload: BugReportCreate, user_id: int, db: AsyncSession = Depends(get_db)):
+async def submit_report(payload: BugReportCreate, user_id: int, background_tasks: BackgroundTasks, db: AsyncSession = Depends(get_db)):
     user = await db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -178,9 +254,9 @@ async def submit_report(payload: BugReportCreate, user_id: int, db: AsyncSession
     db.add(report)
     await db.commit()
     await db.refresh(report)
-
-    # Eager-load submitter for response
     await db.refresh(report, ["submitter"])
+
+    background_tasks.add_task(auto_review_report, report.id)
     return report
 
 
@@ -321,28 +397,27 @@ async def mark_all_read(user_id: int, db: AsyncSession = Depends(get_db)):
 @app.post("/ai/detect-severity")
 async def detect_severity(payload: SeverityDetectRequest):
     try:
-        response = await ai_client.messages.create(
-            model="claude-haiku-4-5",
-            max_tokens=256,
-            system=[{
-                "type": "text",
-                "text": SEVERITY_SYSTEM_PROMPT,
-                "cache_control": {"type": "ephemeral"},
-            }],
-            messages=[{
-                "role": "user",
-                "content": (
-                    f"Title: {payload.title}\n"
-                    f"Description: {payload.description}\n"
-                    f"Steps to reproduce: {payload.steps_to_reproduce}"
-                ),
-            }],
+        prompt = SEVERITY_PROMPT_TEMPLATE.format(
+            title=payload.title,
+            description=payload.description,
+            steps=payload.steps_to_reproduce,
         )
-        result = json.loads(response.content[0].text)
+        response = await groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1,
+            max_tokens=256,
+        )
+        text = response.choices[0].message.content.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        result = json.loads(text.strip())
         if result.get("severity") not in ("low", "medium", "high", "critical"):
             raise ValueError("Invalid severity value")
         return result
     except (json.JSONDecodeError, ValueError):
         raise HTTPException(status_code=500, detail="AI returned an unexpected response format")
-    except anthropic.APIError as e:
-        raise HTTPException(status_code=502, detail=f"AI service error: {e.message}")
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"AI service error: {e}")

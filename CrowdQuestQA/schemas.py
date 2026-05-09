@@ -15,6 +15,7 @@ class UserUpdate(BaseModel):
     location: Optional[str] = None
     avatar_color: Optional[str] = None
     avatar_url: Optional[str] = None
+    remove_avatar: Optional[bool] = None
 
 class UserOut(BaseModel):
     id: int

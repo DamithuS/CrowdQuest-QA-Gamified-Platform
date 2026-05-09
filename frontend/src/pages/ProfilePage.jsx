@@ -127,13 +127,6 @@ function EditModal({ user, onClose, onSave }) {
     try {
       let updated = user
 
-      // Remove existing avatar via dedicated DELETE endpoint
-      if (avatarRemoved && !imageFile) {
-        const delRes = await fetch(`${API}/users/${user.id}/avatar`, { method: 'DELETE' })
-        if (!delRes.ok) throw new Error('Failed to remove photo')
-        updated = await delRes.json()
-      }
-
       // Upload new image if one was selected
       if (imageFile) {
         const form = new FormData()
@@ -143,11 +136,13 @@ function EditModal({ user, onClose, onSave }) {
         updated = await imgRes.json()
       }
 
-      // Patch text fields only
+      // Patch text fields; signal avatar removal via remove_avatar flag
+      const patchBody = { bio, location, avatar_color: avatarColor }
+      if (avatarRemoved && !imageFile) patchBody.remove_avatar = true
       const patchRes = await fetch(`${API}/users/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bio, location, avatar_color: avatarColor }),
+        body: JSON.stringify(patchBody),
       })
       if (!patchRes.ok) throw new Error('Failed to save')
       updated = await patchRes.json()
