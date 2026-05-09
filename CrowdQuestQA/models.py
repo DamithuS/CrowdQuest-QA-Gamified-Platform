@@ -62,6 +62,8 @@ class BugReport(Base):
     version             = Column(String(50), nullable=True)    # app version
     screenshot_url      = Column(String(500), nullable=True)   # S3 or local path
 
+    website_name        = Column(String(200), nullable=True)            # website/app where the bug was found
+
     status              = Column(Enum(StatusEnum), default=StatusEnum.pending, nullable=False)
     quality_score       = Column(Float, nullable=True)         # filled by AI module
     points_awarded      = Column(Integer, nullable=True)

@@ -36,12 +36,7 @@ const SEVERITY_CONFIG = {
 // ── Top bar ───────────────────────────────────────────────────────────────────
 function TopBar({ user }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 }}>
-      <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
+    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar user={user} size={36} />
         <div>
@@ -98,6 +93,7 @@ function DetailModal({ report, onClose }) {
           </div>
         )}
 
+        {report.website_name && <Field label="Website / App" value={report.website_name} />}
         <Field label="Description" value={report.description} />
         <Field label="Steps to Reproduce" value={report.steps_to_reproduce} />
 
@@ -140,7 +136,8 @@ function ReportRow({ report, onClick }) {
       <td style={{ padding: '14px 20px', fontSize: 13, fontWeight: 600, color: '#9ca3af', width: 60 }}>#{report.id}</td>
       <td style={{ padding: '14px 12px', maxWidth: 280 }}>
         <p style={{ fontSize: 14, fontWeight: 600, color: '#111827', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{report.title}</p>
-        {report.environment && <p style={{ fontSize: 12, color: '#9ca3af', margin: '2px 0 0' }}>{report.environment}</p>}
+        {report.website_name && <p style={{ fontSize: 12, color: '#4338CA', margin: '2px 0 0', fontWeight: 600 }}>{report.website_name}</p>}
+        {!report.website_name && report.environment && <p style={{ fontSize: 12, color: '#9ca3af', margin: '2px 0 0' }}>{report.environment}</p>}
       </td>
       <td style={{ padding: '14px 12px' }}>
         <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: sv.bg, color: sv.color, whiteSpace: 'nowrap' }}>{sv.label}</span>

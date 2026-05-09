@@ -22,7 +22,6 @@ for u in DUMMY_USERS:
         user_ids[u["username"]] = uid
         print(f"  Created {u['username']} (id={uid})")
     else:
-        # Already exists — log in to get ID
         login = requests.post(f"{API}/users/login", json={"email": u["email"], "password": u["password"]})
         if login.ok:
             uid = login.json()["user"]["id"]
@@ -48,33 +47,36 @@ print("\nDami's submissions:")
 DAMI_ID = 1
 
 submit(DAMI_ID, {
-    "title": "Login button unresponsive on Safari mobile",
-    "description": "The login button does not respond to tap events on Safari iOS 17. Consistent across iPhone 13 and iPhone 15. Clearing cookies and cache does not resolve the issue.",
-    "steps_to_reproduce": "1. Open Safari on iOS 17\n2. Navigate to the login page\n3. Enter valid credentials\n4. Tap the Login button\n5. No response — button appears frozen",
-    "severity": "high",
-    "environment": "iOS",
-    "device_browser": "Safari iOS 17",
-    "version": "v2.1.0",
+    "title": "Markdown table alignment breaks when a cell contains an emoji",
+    "description": "When any cell in a markdown table contains an emoji character, the column alignment shifts and the table renders incorrectly in the preview pane. The raw markdown is valid and renders correctly on other platforms such as GitLab and VS Code.",
+    "steps_to_reproduce": "1. Open a new GitHub Issue or Pull Request\n2. Add a markdown table with an emoji in any cell\n3. Switch to the Preview tab\n4. Table columns are misaligned — emoji cell causes the whole row to shift",
+    "severity": "medium",
+    "website_name": "GitHub",
+    "environment": "Web",
+    "device_browser": "Chrome 124",
+    "version": "github.com",
 }, status="accepted", points=50, quality=8.5)
 
 submit(DAMI_ID, {
-    "title": "Dashboard XP bar displays 0% after earning points",
-    "description": "The XP progress bar on the dashboard remains at 0% even after a bug report is accepted and points are awarded. The numeric points counter updates correctly but the visual bar does not reflect the change.",
-    "steps_to_reproduce": "1. Log in to the platform\n2. Submit a bug report\n3. Wait for the report to be accepted\n4. Navigate to dashboard\n5. XP bar still shows 0% progress",
+    "title": "Shuffle mode repeatedly plays the same 5 tracks from large playlists",
+    "description": "When shuffle is enabled on a playlist with more than 100 songs, only a small subset of around 5 tracks are played in rotation. Other tracks are never selected. The issue persists after toggling shuffle off and on again.",
+    "steps_to_reproduce": "1. Open any playlist with 100+ songs\n2. Enable Shuffle mode\n3. Play through 20+ tracks\n4. The same 5 tracks repeat — remaining tracks are never selected",
     "severity": "medium",
+    "website_name": "Spotify",
     "environment": "Web",
     "device_browser": "Chrome 124",
-    "version": "v2.1.0",
+    "version": "1.2.31",
 }, status="accepted", points=50, quality=7.5)
 
 submit(DAMI_ID, {
-    "title": "Notification badge count persists after reading all notifications",
-    "description": "After opening and reading all notifications, the red badge counter on the bell icon does not reset to zero. The badge remains visible until a page reload.",
-    "steps_to_reproduce": "1. Receive one or more notifications\n2. Observe the badge count on the bell icon\n3. Click the bell icon and read all notifications\n4. Badge count does not reset",
+    "title": "Notification bell badge persists after marking all notifications as read",
+    "description": "After clicking the notification bell and marking all notifications as read, the red badge counter on the bell icon remains visible. The badge only disappears after a full page reload.",
+    "steps_to_reproduce": "1. Receive one or more notifications in Notion\n2. Observe the red badge on the bell icon\n3. Open the notifications panel\n4. Click 'Mark all as read'\n5. Close the panel — badge count is still visible",
     "severity": "low",
+    "website_name": "Notion",
     "environment": "Web",
     "device_browser": "Firefox 125",
-    "version": "v2.0.5",
+    "version": "notion.so",
 }, status="under_review")
 
 # ── Other users' submissions ──────────────────────────────────────────────────
@@ -82,79 +84,86 @@ print("\nOther users' submissions:")
 
 # TechNinja — 150 pts (rank 1)
 submit(user_ids.get("TechNinja"), {
-    "title": "App crashes on checkout with more than 10 items in cart",
-    "description": "An unhandled exception is thrown when the user attempts to checkout with more than 10 items in the cart. The app displays a blank white screen and all cart data is lost.",
-    "steps_to_reproduce": "1. Add 11 or more items to the cart\n2. Proceed to checkout\n3. App crashes with a white screen\n4. Cart is emptied on recovery",
+    "title": "Checkout page crashes when cart contains more than 10 items",
+    "description": "An unhandled exception is thrown when proceeding to checkout with more than 10 items in the cart. The page goes blank and all cart data is lost on recovery. Reproducible on both guest and signed-in accounts.",
+    "steps_to_reproduce": "1. Add 11 or more items to the cart\n2. Click 'Proceed to Checkout'\n3. Page goes blank with no error message\n4. Navigating back shows an empty cart",
     "severity": "critical",
+    "website_name": "Amazon",
     "environment": "Web",
     "device_browser": "Chrome 124",
-    "version": "v3.0.0",
+    "version": "amazon.com",
 }, status="accepted", points=150, quality=9.5)
 
 # BugSlayer — 120 pts (rank 2)
 submit(user_ids.get("BugSlayer"), {
-    "title": "Password reset email not delivered to Gmail addresses",
-    "description": "Users with Gmail accounts never receive the password reset email. The issue is isolated to Gmail — other providers such as Outlook and Yahoo work correctly. No bounce or error is reported server-side.",
-    "steps_to_reproduce": "1. Click Forgot Password on the login page\n2. Enter a Gmail address\n3. Submit the form\n4. Check Gmail inbox and spam — email never arrives",
+    "title": "Sign-in verification code emails not delivered to Outlook addresses",
+    "description": "Users with Microsoft Outlook accounts never receive the two-factor authentication email when signing in from a new device. The issue is isolated to Outlook — Gmail and Yahoo addresses receive the code within seconds. No bounce is reported.",
+    "steps_to_reproduce": "1. Sign out of your Google account\n2. Attempt to sign back in on a new device\n3. Enter an Outlook email address when prompted for verification\n4. Verification code email is never received — check inbox and spam",
     "severity": "high",
+    "website_name": "Google",
     "environment": "Web",
-    "device_browser": "Chrome 124",
-    "version": "v3.0.0",
+    "device_browser": "Edge 124",
+    "version": "accounts.google.com",
 }, status="accepted", points=120, quality=9.0)
 
 # CodeHunter — 100 pts (rank 3)
 submit(user_ids.get("CodeHunter"), {
-    "title": "Search results contain duplicate entries on page 2",
-    "description": "When paginating search results, the first three entries on page 2 are exact duplicates of the last three entries on page 1. This affects the displayed result count and user experience.",
-    "steps_to_reproduce": "1. Perform any keyword search\n2. Navigate to page 2 of results\n3. First 3 results duplicate last 3 results from page 1",
+    "title": "Search results show duplicate videos when navigating to page 2",
+    "description": "When paginating search results, the first three videos on page 2 are exact duplicates of the last three videos on page 1. This inflates the result count and makes it difficult to find new content.",
+    "steps_to_reproduce": "1. Search for any popular keyword on YouTube\n2. Scroll to the bottom of page 1\n3. Click 'Next' or scroll to page 2\n4. The first 3 results on page 2 are identical to the last 3 on page 1",
     "severity": "medium",
+    "website_name": "YouTube",
     "environment": "Web",
-    "device_browser": "Edge 124",
-    "version": "v2.9.1",
+    "device_browser": "Safari 17",
+    "version": "youtube.com",
 }, status="accepted", points=100, quality=8.0)
 
-# TestMaster — 60 pts (rank 5, below Dami)
+# TestMaster — 60 pts
 submit(user_ids.get("TestMaster"), {
-    "title": "File upload silently fails for files larger than 5MB",
-    "description": "Uploading a file over 5MB shows a success message but the file is never saved. No error is shown to the user, making the issue difficult to detect.",
-    "steps_to_reproduce": "1. Navigate to the file upload section\n2. Select any file larger than 5MB\n3. Click Upload\n4. A success message appears but the file is missing",
+    "title": "File uploads over 5 MB silently fail with no error feedback",
+    "description": "Uploading a file larger than 5 MB in a Slack message shows a brief loading indicator followed by a success state, but the file never appears in the conversation. No error message is displayed, making the failure invisible to the user.",
+    "steps_to_reproduce": "1. Open any Slack channel or direct message\n2. Click the attachment icon\n3. Select a file larger than 5 MB\n4. A loading indicator appears then disappears\n5. No file is posted and no error is shown",
     "severity": "high",
+    "website_name": "Slack",
     "environment": "Windows",
-    "device_browser": "Chrome 124",
-    "version": "v2.7.0",
+    "device_browser": "Slack Desktop 4.35",
+    "version": "4.35.131",
 }, status="accepted", points=60, quality=7.0)
 
-# QAHero — 40 pts (rank 6)
+# QAHero — 40 pts
 submit(user_ids.get("QAHero"), {
-    "title": "Dark mode preference resets to light mode on page refresh",
-    "description": "Enabling dark mode and refreshing the page causes the theme to revert to light mode. The user preference is not being persisted in localStorage between sessions.",
-    "steps_to_reproduce": "1. Enable dark mode in settings\n2. Refresh the page\n3. Theme reverts to light mode",
+    "title": "Dark mode preference resets to light mode after every page refresh",
+    "description": "Enabling dark mode on X (Twitter) and refreshing the page causes the interface to revert to light mode. The preference is not persisted between sessions, forcing users to re-enable it each visit.",
+    "steps_to_reproduce": "1. Go to Settings and enable Dark Mode\n2. Return to the home timeline\n3. Refresh the page\n4. Interface reverts to light mode",
     "severity": "low",
+    "website_name": "X (Twitter)",
     "environment": "Web",
     "device_browser": "Chrome 123",
-    "version": "v2.8.0",
+    "version": "x.com",
 }, status="accepted", points=40, quality=7.0)
 
-# BugFinder — 30 pts (rank 7)
+# BugFinder — 30 pts (under_review)
 submit(user_ids.get("BugFinder"), {
-    "title": "Profile avatar not updated after saving changes",
-    "description": "After uploading a new profile picture and saving, the old avatar continues to display in the header and sidebar. A hard refresh is required to see the updated avatar.",
-    "steps_to_reproduce": "1. Go to Profile and click Edit Profile\n2. Upload a new profile picture\n3. Click Save Changes\n4. Old avatar is still shown in the navbar",
+    "title": "Profile avatar does not update in the header after saving a new photo",
+    "description": "After uploading a new profile picture on Reddit and clicking Save, the old avatar continues to display in the top navigation bar. A hard refresh is required to see the updated photo, and the old image still shows in comments made before the refresh.",
+    "steps_to_reproduce": "1. Go to Reddit profile settings\n2. Upload a new profile picture\n3. Click Save\n4. The old avatar is still shown in the navbar and on existing comments",
     "severity": "low",
+    "website_name": "Reddit",
     "environment": "Web",
     "device_browser": "Firefox 124",
-    "version": "v2.5.0",
+    "version": "reddit.com",
 }, status="under_review", points=30)
 
-# DebugPro — pending, 0 pts (rank last)
+# DebugPro — pending, 0 pts
 submit(user_ids.get("DebugPro"), {
-    "title": "Leaderboard does not update in real time after point award",
-    "description": "When a bug report is accepted and points are awarded, the leaderboard ranking does not reflect the change until the page is manually refreshed. Expected real-time or near-real-time updates.",
-    "steps_to_reproduce": "1. Have two browser windows open: one on Leaderboard, one on admin panel\n2. Accept a bug report in the admin panel\n3. Observe the leaderboard — ranking not updated",
+    "title": "Server member list does not refresh in real time when users join a voice channel",
+    "description": "When a user joins a voice channel in Discord, the member list panel does not update for other members in the server until the page is manually refreshed. Expected behaviour is for the list to update within 1-2 seconds.",
+    "steps_to_reproduce": "1. Open Discord in two browser tabs with different accounts in the same server\n2. Have Account B join a voice channel\n3. Observe the member list in Account A's tab\n4. Member list does not reflect Account B joining until page refresh",
     "severity": "medium",
+    "website_name": "Discord",
     "environment": "Web",
     "device_browser": "Chrome 124",
-    "version": "v3.0.0",
+    "version": "discord.com",
 }, status="pending")
 
-print("\nDone! Database seeded with 10 bug reports.")
+print("\nDone! Database seeded with real-world bug reports.")

@@ -58,6 +58,7 @@ class BugReportCreate(BaseModel):
     description: str = Field(..., min_length=20)
     steps_to_reproduce: str = Field(..., min_length=10)
     severity: SeverityEnum = SeverityEnum.medium
+    website_name: Optional[str] = None
     environment: Optional[str] = None
     device_browser: Optional[str] = None
     version: Optional[str] = None
@@ -69,6 +70,7 @@ class BugReportOut(BaseModel):
     description: str
     steps_to_reproduce: str
     severity: SeverityEnum
+    website_name: Optional[str]
     environment: Optional[str]
     device_browser: Optional[str]
     version: Optional[str]

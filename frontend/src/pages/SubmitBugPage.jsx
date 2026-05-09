@@ -7,10 +7,10 @@ import Avatar from '../components/Avatar'
 const API = 'http://localhost:8000'
 
 const SEVERITY_OPTIONS = [
-  { value: 'low',      label: 'Low',      desc: 'Minor issue, cosmetic or trivial',     bg: '#f0fdf4', border: '#86efac', color: '#15803d' },
-  { value: 'medium',   label: 'Medium',   desc: 'Affects functionality, workaround exists', bg: '#fef9c3', border: '#fde047', color: '#92400e' },
-  { value: 'high',     label: 'High',     desc: 'Significant impact, no workaround',    bg: '#fff7ed', border: '#fdba74', color: '#c2410c' },
-  { value: 'critical', label: 'Critical', desc: 'System crash, data loss, security risk', bg: '#fee2e2', border: '#fca5a5', color: '#dc2626' },
+  { value: 'low',      label: 'Low',      desc: 'Minor issue, cosmetic or trivial',       bg: '#f0fdf4', border: '#86efac', color: '#22c55e' },
+  { value: 'medium',   label: 'Medium',   desc: 'Affects functionality, workaround exists', bg: '#fefce8', border: '#fde047', color: '#eab308' },
+  { value: 'high',     label: 'High',     desc: 'Significant impact, no workaround',       bg: '#fff7ed', border: '#fdba74', color: '#ef4444' },
+  { value: 'critical', label: 'Critical', desc: 'System crash, data loss, security risk',  bg: '#fee2e2', border: '#fca5a5', color: '#991b1b' },
 ]
 
 const ENVIRONMENT_OPTIONS = ['Windows', 'macOS', 'Linux', 'Android', 'iOS', 'Web', 'Other']
@@ -18,12 +18,7 @@ const ENVIRONMENT_OPTIONS = ['Windows', 'macOS', 'Linux', 'Android', 'iOS', 'Web
 // ── Top bar ───────────────────────────────────────────────────────────────────
 function TopBar({ user }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 }}>
-      <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
+    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar user={user} size={36} />
         <div>
@@ -95,7 +90,7 @@ export default function SubmitBugPage() {
 
   const [form, setForm] = useState({
     title: '', description: '', steps_to_reproduce: '',
-    severity: '', environment: '', device_browser: '', version: '', screenshot_url: '',
+    severity: '', website_name: '', environment: '', device_browser: '', version: '', screenshot_url: '',
   })
   const [errors, setErrors]         = useState({})
   const [submitting, setSubmitting] = useState(false)
@@ -111,6 +106,8 @@ export default function SubmitBugPage() {
 
   function validate() {
     const e = {}
+    if (!form.website_name.trim())
+      e.website_name = 'Please enter the website or app name.'
     if (!form.title.trim() || form.title.trim().length < 5)
       e.title = 'Title must be at least 5 characters.'
     if (!form.description.trim() || form.description.trim().length < 20)
@@ -135,6 +132,7 @@ export default function SubmitBugPage() {
         description:         form.description.trim(),
         steps_to_reproduce:  form.steps_to_reproduce.trim(),
         severity:            form.severity,
+        website_name:        form.website_name.trim() || null,
         environment:         form.environment.trim() || null,
         device_browser:      form.device_browser.trim() || null,
         version:             form.version.trim() || null,
@@ -159,7 +157,7 @@ export default function SubmitBugPage() {
   }
 
   function resetForm() {
-    setForm({ title: '', description: '', steps_to_reproduce: '', severity: '', environment: '', device_browser: '', version: '', screenshot_url: '' })
+    setForm({ title: '', description: '', steps_to_reproduce: '', severity: '', website_name: '', environment: '', device_browser: '', version: '', screenshot_url: '' })
     setErrors({})
     setSubmitted(null)
     setApiError('')
@@ -233,8 +231,21 @@ export default function SubmitBugPage() {
                     </div>
                   )}
 
+                  {/* Website / App */}
+                  <FormField label="Website / App" required error={errors.website_name}>
+                    <input
+                      value={form.website_name}
+                      onChange={e => set('website_name', e.target.value)}
+                      maxLength={200}
+                      placeholder="e.g. GitHub, Spotify, Amazon"
+                      style={inputStyle(!!errors.website_name)}
+                      onFocus={e => e.target.style.borderColor = '#4338CA'}
+                      onBlur={e => e.target.style.borderColor = errors.website_name ? '#fca5a5' : '#e5e7eb'}
+                    />
+                  </FormField>
+
                   {/* Title */}
-                  <FormField label="Title" required hint={`${form.title.length}/200`} error={errors.title}>
+                  <FormField label="Bug Title" required hint={`${form.title.length}/200`} error={errors.title}>
                     <input
                       value={form.title}
                       onChange={e => set('title', e.target.value)}
