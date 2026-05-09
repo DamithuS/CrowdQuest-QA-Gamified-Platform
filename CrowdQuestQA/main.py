@@ -206,6 +206,12 @@ async def update_user(user_id: int, payload: UserUpdate, db: AsyncSession = Depe
     exists = await db.scalar(select(User).where(User.id == user_id))
     if not exists:
         raise HTTPException(status_code=404, detail="User not found")
+    if payload.username:
+        taken = await db.scalar(
+            select(User).where(User.username == payload.username, User.id != user_id)
+        )
+        if taken:
+            raise HTTPException(status_code=400, detail="Username already taken")
     data = {f: getattr(payload, f) for f in payload.model_fields_set if f != "remove_avatar"}
     if payload.remove_avatar:
         data["avatar_url"] = None

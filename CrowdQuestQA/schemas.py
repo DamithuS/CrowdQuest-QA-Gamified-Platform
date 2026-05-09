@@ -11,6 +11,7 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=6)
 
 class UserUpdate(BaseModel):
+    username: Optional[str] = Field(None, min_length=3, max_length=50)
     bio: Optional[str] = None
     location: Optional[str] = None
     avatar_color: Optional[str] = None

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { useAuth } from '../context/AuthContext'
 
 // ─── Hero right-side illustration ────────────────────────────────────────────
 function HeroIllustration() {
@@ -175,6 +176,7 @@ function FeatureCard({ iconBg, iconStroke, icon, title, description }) {
 const W = { maxWidth: 1200, margin: '0 auto', padding: '0 32px' }
 
 export default function LandingPage() {
+  const { user } = useAuth()
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#EEF2FF' }}>
       <Navbar />
@@ -194,7 +196,7 @@ export default function LandingPage() {
             earn rewards, and help build better software for everyone.
           </p>
           <div>
-            <Link to="/register" style={{
+            <Link to={user ? '/submit-bug' : '/login'} style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
               background: '#4338CA', color: '#fff', fontWeight: 700,
               fontSize: 15, padding: '13px 28px', borderRadius: 10,

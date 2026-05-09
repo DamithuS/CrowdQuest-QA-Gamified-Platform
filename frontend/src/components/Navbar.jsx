@@ -19,6 +19,14 @@ export default function Navbar({ activePage = 'home' }) {
     paddingBottom: 2,
   })
 
+  const NAV_LINKS = [
+    { to: '/dashboard',      label: 'Dashboard',       page: 'dashboard' },
+    { to: '/submit-bug',     label: 'Submit Bug',       page: 'submit' },
+    { to: '/my-submissions', label: 'My Submissions',   page: 'submissions' },
+    { to: '/leaderboard',    label: 'Leaderboard',      page: 'leaderboard' },
+    { to: '/profile',        label: 'Profile',          page: 'profile' },
+  ]
+
   return (
     <nav style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 50 }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -29,17 +37,15 @@ export default function Navbar({ activePage = 'home' }) {
         </Link>
 
         {/* Centre nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
-          <Link to="/" style={linkStyle('home')}>Home</Link>
-          <Link to="/leaderboard" style={linkStyle('leaderboard')}>Leaderboard</Link>
-          <Link to="/about" style={linkStyle('about')}>About Us</Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          {NAV_LINKS.map(({ to, label, page }) => (
+            <Link key={page} to={to} style={linkStyle(page)}>{label}</Link>
+          ))}
         </div>
 
         {/* Right — auth state aware */}
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <Link to="/dashboard" style={{ fontSize: 13, fontWeight: 600, color: '#4b5563', textDecoration: 'none' }}>Dashboard</Link>
-            {/* Avatar */}
             <Link to="/profile" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
               <Avatar user={user} size={34} />
               <div style={{ display: 'flex', flexDirection: 'column' }}>

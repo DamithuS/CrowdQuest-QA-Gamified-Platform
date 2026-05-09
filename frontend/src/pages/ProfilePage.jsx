@@ -80,6 +80,7 @@ function ActivityRow({ report }) {
 
 // ── Edit Profile modal ────────────────────────────────────────────────────────
 function EditModal({ user, onClose, onSave }) {
+  const [username, setUsername] = useState(user.username || '')
   const [bio, setBio] = useState(user.bio || '')
   const [location, setLocation] = useState(user.location || '')
   const [avatarColor, setAvatarColor] = useState(user.avatar_color || '#4338CA')
@@ -137,14 +138,17 @@ function EditModal({ user, onClose, onSave }) {
       }
 
       // Patch text fields; signal avatar removal via remove_avatar flag
-      const patchBody = { bio, location, avatar_color: avatarColor }
+      const patchBody = { username, bio, location, avatar_color: avatarColor }
       if (avatarRemoved && !imageFile) patchBody.remove_avatar = true
       const patchRes = await fetch(`${API}/users/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patchBody),
       })
-      if (!patchRes.ok) throw new Error('Failed to save')
+      if (!patchRes.ok) {
+        const errData = await patchRes.json().catch(() => ({}))
+        throw new Error(errData.detail || 'Failed to save')
+      }
       updated = await patchRes.json()
 
       onSave(updated)
@@ -229,6 +233,12 @@ function EditModal({ user, onClose, onSave }) {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Username */}
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Username</label>
+          <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Your username" minLength={3} maxLength={50} style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }} onFocus={e => e.target.style.borderColor = '#4338CA'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
         </div>
 
         {/* Bio */}
