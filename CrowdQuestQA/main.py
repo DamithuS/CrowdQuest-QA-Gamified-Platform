@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, update as sql_update
 from typing import Optional
 import hashlib
 import shutil
@@ -121,8 +121,20 @@ async def update_user(user_id: int, payload: UserUpdate, db: AsyncSession = Depe
     user = await db.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    for field, value in payload.model_dump(exclude_none=True).items():
-        setattr(user, field, value)
+    data = {f: getattr(payload, f) for f in payload.model_fields_set}
+    if data:
+        await db.execute(sql_update(User).where(User.id == user_id).values(**data))
+        await db.commit()
+    await db.refresh(user)
+    return user
+
+
+@app.delete("/users/{user_id}/avatar", response_model=UserOut)
+async def delete_avatar(user_id: int, db: AsyncSession = Depends(get_db)):
+    user = await db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    await db.execute(sql_update(User).where(User.id == user_id).values(avatar_url=None))
     await db.commit()
     await db.refresh(user)
     return user

@@ -26,23 +26,8 @@ const AVATAR_COLORS = [
 // ── Top bar ───────────────────────────────────────────────────────────────────
 function TopBar({ user, notifCount }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', flexShrink: 0 }}>
-      <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
+    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-        <div style={{ position: 'relative', cursor: 'pointer' }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-          {notifCount > 0 && (
-            <div style={{ position: 'absolute', top: -4, right: -4, width: 16, height: 16, background: '#4338CA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: '#fff' }}>
-              {notifCount}
-            </div>
-          )}
-        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Avatar user={user} size={36} />
           <div>
@@ -100,6 +85,7 @@ function EditModal({ user, onClose, onSave }) {
   const [avatarColor, setAvatarColor] = useState(user.avatar_color || '#4338CA')
   const [preview, setPreview] = useState(user.avatar_url ? `${API}${user.avatar_url}` : null)
   const [imageFile, setImageFile] = useState(null)
+  const [avatarRemoved, setAvatarRemoved] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const fileInputRef = useRef(null)
@@ -129,25 +115,35 @@ function EditModal({ user, onClose, onSave }) {
     setError('')
   }
 
+  function handleRemovePhoto() {
+    setPreview(null)
+    setImageFile(null)
+    setAvatarRemoved(true)
+  }
+
   async function handleSave() {
     setSaving(true)
     setError('')
     try {
       let updated = user
 
-      // Upload image first if a new file was selected
+      // Remove existing avatar via dedicated DELETE endpoint
+      if (avatarRemoved && !imageFile) {
+        const delRes = await fetch(`${API}/users/${user.id}/avatar`, { method: 'DELETE' })
+        if (!delRes.ok) throw new Error('Failed to remove photo')
+        updated = await delRes.json()
+      }
+
+      // Upload new image if one was selected
       if (imageFile) {
         const form = new FormData()
         form.append('file', imageFile)
-        const imgRes = await fetch(`${API}/users/${user.id}/avatar`, {
-          method: 'POST',
-          body: form,
-        })
+        const imgRes = await fetch(`${API}/users/${user.id}/avatar`, { method: 'POST', body: form })
         if (!imgRes.ok) throw new Error('Image upload failed')
         updated = await imgRes.json()
       }
 
-      // Then patch text fields
+      // Patch text fields only
       const patchRes = await fetch(`${API}/users/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -158,8 +154,8 @@ function EditModal({ user, onClose, onSave }) {
 
       onSave(updated)
       onClose()
-    } catch {
-      setError('Could not save changes. Try again.')
+    } catch (err) {
+      setError(err.message || 'Could not save changes. Try again.')
     } finally {
       setSaving(false)
     }
@@ -182,13 +178,25 @@ function EditModal({ user, onClose, onSave }) {
           <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 10 }}>Profile Picture</label>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             {/* Preview */}
-            <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid #e5e7eb' }}>
-              {preview ? (
-                <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: '100%', height: '100%', background: avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 28 }}>
-                  {user.username?.[0]?.toUpperCase()}
-                </div>
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', border: '2px solid #e5e7eb' }}>
+                {preview ? (
+                  <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: avatarColor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 28 }}>
+                    {user.username?.[0]?.toUpperCase()}
+                  </div>
+                )}
+              </div>
+              {preview && (
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  title="Remove photo"
+                  style={{ position: 'absolute', top: -4, right: -4, width: 22, height: 22, borderRadius: '50%', background: '#ef4444', border: '2px solid #fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
               )}
             </div>
 
@@ -340,10 +348,11 @@ export default function ProfilePage() {
 
   function handleSave(updated) {
     updateUser(updated)
+    setFreshUser(updated)
   }
 
-  const joinDate = user?.created_at
-    ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  const joinDate = displayUser?.created_at
+    ? new Date(displayUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : null
 
   return (
@@ -351,7 +360,7 @@ export default function ProfilePage() {
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <TopBar user={user} notifCount={notifCount} />
+        <TopBar user={displayUser} notifCount={notifCount} />
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
 
@@ -367,17 +376,17 @@ export default function ProfilePage() {
               {/* Avatar + info */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                 <div style={{ position: 'relative' }}>
-                  <Avatar user={user} size={80} fontSize={32} />
+                  <Avatar user={displayUser} size={80} fontSize={32} />
                   <button onClick={() => setEditOpen(true)} style={{ position: 'absolute', bottom: 0, right: 0, width: 24, height: 24, borderRadius: '50%', background: '#4338CA', border: '2px solid #fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                   </button>
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                    <h2 style={{ fontSize: 20, fontWeight: 800, color: '#111827', margin: 0 }}>{user?.username}</h2>
-                    <span style={{ background: '#EEF2FF', color: '#4338CA', fontSize: 12, fontWeight: 700, padding: '2px 10px', borderRadius: 20 }}>Level {user?.level}</span>
+                    <h2 style={{ fontSize: 20, fontWeight: 800, color: '#111827', margin: 0 }}>{displayUser?.username}</h2>
+                    <span style={{ background: '#EEF2FF', color: '#4338CA', fontSize: 12, fontWeight: 700, padding: '2px 10px', borderRadius: 20 }}>Level {displayUser?.level}</span>
                   </div>
-                  {user?.bio && <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 8px' }}>{user.bio}</p>}
+                  {displayUser?.bio && <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 8px' }}>{displayUser.bio}</p>}
                   <div style={{ display: 'flex', gap: 20 }}>
                     {joinDate && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9ca3af' }}>
@@ -385,10 +394,10 @@ export default function ProfilePage() {
                         Member since {joinDate}
                       </div>
                     )}
-                    {user?.location && (
+                    {displayUser?.location && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9ca3af' }}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        {user.location}
+                        {displayUser.location}
                       </div>
                     )}
                   </div>
@@ -459,7 +468,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {editOpen && <EditModal user={user} onClose={() => setEditOpen(false)} onSave={handleSave} />}
+      {editOpen && <EditModal user={displayUser} onClose={() => setEditOpen(false)} onSave={handleSave} />}
     </div>
   )
 }
