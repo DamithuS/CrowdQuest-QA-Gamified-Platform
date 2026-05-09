@@ -6,6 +6,19 @@ import Avatar from '../components/Avatar'
 
 const API = 'http://localhost:8000'
 
+const parseDate = (s) => new Date(/Z|[+-]\d\d:\d\d$/.test(s ?? '') ? s : (s ?? '') + 'Z')
+const timeAgo = (dateStr) => {
+  const diff = Date.now() - parseDate(dateStr)
+  if (diff < 60000) return 'just now'
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 30) return `${days}d ago`
+  return parseDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
 // ── Top header bar ────────────────────────────────────────────────────────────
 function TopBar({ user, notifCount }) {
   return (
@@ -68,14 +81,6 @@ function ActivityRow({ report }) {
   }
   const cfg = statusConfig[report.status] || statusConfig.pending
 
-  const timeAgo = (dateStr) => {
-    const diff = Date.now() - new Date(dateStr)
-    const mins = Math.floor(diff / 60000)
-    if (mins < 60) return `${mins}m ago`
-    const hrs = Math.floor(mins / 60)
-    if (hrs < 24) return `${hrs}h ago`
-    return `${Math.floor(hrs / 24)}d ago`
-  }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 0', borderBottom: '1px solid #f9fafb' }}>
@@ -88,7 +93,7 @@ function ActivityRow({ report }) {
         </p>
         <p style={{ fontSize: 12, color: '#6b7280', margin: 0 }}>{cfg.pts ? `You earned ${cfg.pts} points` : 'Awaiting evaluation'}</p>
       </div>
-      <span style={{ fontSize: 12, color: '#9ca3af', flexShrink: 0 }}>{timeAgo(report.created_at)}</span>
+      <span style={{ fontSize: 12, color: '#9ca3af', flexShrink: 0 }}>{timeAgo(report.created_at ?? '')}</span>
     </div>
   )
 }
@@ -131,29 +136,36 @@ function XPBar({ xp, level }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user, updateUser } = useAuth()
   const [reports, setReports] = useState([])
   const [rank, setRank] = useState(null)
   const [notifCount, setNotifCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [freshUser, setFreshUser] = useState(null)
 
   useEffect(() => {
     if (!user) return
     async function load() {
       try {
-        const [reportsRes, leaderboardRes, notifRes] = await Promise.all([
+        const [reportsRes, leaderboardRes, notifRes, userRes] = await Promise.all([
           fetch(`${API}/users/${user.id}/reports`),
           fetch(`${API}/leaderboard`),
           fetch(`${API}/users/${user.id}/notifications`),
+          fetch(`${API}/users/${user.id}`),
         ])
         const reportsData = await reportsRes.json()
         const leaderboard = await leaderboardRes.json()
         const notifs = await notifRes.json()
+        const userData = await userRes.json()
 
         setReports(Array.isArray(reportsData) ? reportsData : [])
         const entry = leaderboard.find(e => e.user.id === user.id)
         setRank(entry ? entry.rank : '—')
         setNotifCount(notifs.filter(n => !n.is_read).length)
+        if (userData?.id) {
+          setFreshUser(userData)
+          updateUser(userData)
+        }
       } catch {
         setReports([])
       } finally {
@@ -161,8 +173,9 @@ export default function DashboardPage() {
       }
     }
     load()
-  }, [user])
+  }, [user?.id])
 
+  const displayUser = freshUser ?? user
   const accepted = reports.filter(r => r.status === 'accepted').length
   const recentActivity = reports.slice(0, 4)
 
@@ -189,7 +202,7 @@ export default function DashboardPage() {
             <StatCard
               iconBg="#EEF2FF" iconStroke="#4338CA"
               icon={<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>}
-              label="Total Points" value={loading ? '—' : user?.points ?? 0}
+              label="Total Points" value={loading ? '—' : displayUser?.points ?? 0}
             />
             <StatCard
               iconBg="#fef9c3" iconStroke="#ca8a04"
@@ -250,7 +263,7 @@ export default function DashboardPage() {
             {/* Your Progress */}
             <div style={{ background: '#fff', borderRadius: 16, padding: '24px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
               <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 20px' }}>Your Progress</h2>
-              <XPBar xp={user?.xp ?? 0} level={user?.level ?? 1} />
+              <XPBar xp={displayUser?.xp ?? 0} level={displayUser?.level ?? 1} />
             </div>
           </div>
 

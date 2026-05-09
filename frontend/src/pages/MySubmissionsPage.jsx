@@ -5,6 +5,20 @@ import Avatar from '../components/Avatar'
 
 const API = 'http://localhost:8000'
 
+const parseDate = (s) => new Date(/Z|[+-]\d\d:\d\d$/.test(s ?? '') ? s : (s ?? '') + 'Z')
+const timeAgo = (dateStr) => {
+  const diff = Date.now() - parseDate(dateStr)
+  if (diff < 60000) return 'just now'
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 30) return `${days}d ago`
+  return parseDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+const fmtDate = (d) => parseDate(d).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+
 const STATUS_CONFIG = {
   pending:      { label: 'Pending',      bg: '#e0e7ff', color: '#4338CA' },
   under_review: { label: 'Under Review', bg: '#fef9c3', color: '#92400e' },
@@ -55,7 +69,7 @@ function SummaryCard({ label, value, bg, color }) {
 function DetailModal({ report, onClose }) {
   const st = STATUS_CONFIG[report.status]
   const sv = SEVERITY_CONFIG[report.severity]
-  const fmt = d => new Date(d).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+  const fmt = fmtDate
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }} onClick={onClose}>
@@ -115,13 +129,6 @@ function Field({ label, value, inline }) {
 function ReportRow({ report, onClick }) {
   const st = STATUS_CONFIG[report.status]
   const sv = SEVERITY_CONFIG[report.severity]
-  const timeAgo = d => {
-    const mins = Math.floor((Date.now() - new Date(d)) / 60000)
-    if (mins < 60) return `${mins}m ago`
-    const hrs = Math.floor(mins / 60)
-    if (hrs < 24) return `${hrs}h ago`
-    return `${Math.floor(hrs / 24)}d ago`
-  }
 
   return (
     <tr
