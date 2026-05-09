@@ -42,19 +42,10 @@ export default function Sidebar() {
       position: 'sticky', top: 0,
     }}>
       {/* Logo */}
-      <div style={{ padding: '20px 24px', borderBottom: '1px solid #f3f4f6' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-          <div style={{ width: 34, height: 34, background: '#4338CA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="7"/><path d="m21 21-3.5-3.5"/><path d="M8 11h6M11 8v6"/>
-            </svg>
-          </div>
-          <span style={{ fontSize: 16, fontWeight: 800 }}>
-            <span style={{ color: '#1e1b4b' }}>CrowdQuest</span>
-            <span style={{ color: '#4F46E5' }}>QA</span>
-          </span>
+      <div style={{ padding: '4px 16px', borderBottom: '1px solid #f3f4f6' }}>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ width: '180px', height: 'auto', display: 'block' }} />
         </Link>
-        <p style={{ fontSize: 10, color: '#9ca3af', marginTop: 2, marginLeft: 42 }}>Test. Report. Earn.</p>
       </div>
 
       {/* Nav links */}

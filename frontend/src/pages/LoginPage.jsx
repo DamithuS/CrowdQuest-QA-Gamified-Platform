@@ -16,15 +16,8 @@ function LeftPanel() {
     }}>
       {/* Top branding */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
-          <div style={{ width: 36, height: 36, background: '#4338CA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="7" /><path d="m21 21-3.5-3.5" /><path d="M8 11h6M11 8v6" />
-            </svg>
-          </div>
-          <span style={{ fontSize: 18, fontWeight: 800 }}>
-            <span style={{ color: '#1e1b4b' }}>CrowdQuest</span><span style={{ color: '#4F46E5' }}>QA</span>
-          </span>
+        <div style={{ marginBottom: 32 }}>
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ height: 64, width: 'auto' }} />
         </div>
 
         <h2 style={{ fontSize: 28, fontWeight: 800, color: '#1e1b4b', marginBottom: 12, lineHeight: 1.2 }}>
@@ -220,15 +213,8 @@ export default function LoginPage() {
     <div style={{ minHeight: '100vh', background: '#EEF2FF', display: 'flex', flexDirection: 'column' }}>
       {/* Minimal nav */}
       <nav style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '0 32px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-          <div style={{ width: 32, height: 32, background: '#4338CA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="7" /><path d="m21 21-3.5-3.5" /><path d="M8 11h6M11 8v6" />
-            </svg>
-          </div>
-          <span style={{ fontSize: 16, fontWeight: 800 }}>
-            <span style={{ color: '#1e1b4b' }}>CrowdQuest</span><span style={{ color: '#4F46E5' }}>QA</span>
-          </span>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ height: 48, width: 'auto' }} />
         </Link>
         <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#6b7280' }}>
           <Link to="/" style={{ color: '#6b7280', textDecoration: 'none' }}>Home</Link>

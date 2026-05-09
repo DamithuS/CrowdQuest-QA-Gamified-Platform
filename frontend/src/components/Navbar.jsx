@@ -24,17 +24,8 @@ export default function Navbar({ activePage = 'home' }) {
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
         {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <div style={{ width: 38, height: 38, background: '#4338CA', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round">
-              <circle cx="11" cy="11" r="7" /><path d="m21 21-3.5-3.5" /><path d="M8 11h6M11 8v6" />
-            </svg>
-          </div>
-          <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-0.3px' }}>
-            <span style={{ color: '#1e1b4b' }}>CrowdQuest</span>
-            <span style={{ color: '#4F46E5' }}>QA</span>
-          </span>
-          <span style={{ fontSize: 11, color: '#6b7280', marginLeft: -4 }}>Test. Report. Earn.</span>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ height: 64, width: 'auto' }} />
         </Link>
 
         {/* Centre nav */}

@@ -183,6 +183,7 @@ export default function LandingPage() {
       <section style={{ ...W, width: '100%', padding: '72px 32px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center' }}>
         {/* Left copy */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ width: 280, height: 'auto' }} />
           <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-1.5px', color: '#1e1b4b' }}>
             Find Bugs.<br />
             Earn Points.<br />
