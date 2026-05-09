@@ -21,42 +21,82 @@ function TopBar({ user }) {
   )
 }
 
-// ── Podium card (top 3) ───────────────────────────────────────────────────────
-const PODIUM = {
-  1: { bg: 'linear-gradient(135deg, #fef9c3, #fef08a)', border: '#fbbf24', label: '#92400e', size: 88 },
-  2: { bg: 'linear-gradient(135deg, #f1f5f9, #e2e8f0)', border: '#94a3b8', label: '#475569', size: 76 },
-  3: { bg: 'linear-gradient(135deg, #fef3e2, #fed7aa)', border: '#fb923c', label: '#92400e', size: 72 },
+// ── Podium (top 3) ────────────────────────────────────────────────────────────
+const PODIUM_CONFIG = {
+  1: {
+    avatarSize: 84, platformH: 90, platformBg: 'linear-gradient(180deg,#fbbf24,#d97706)',
+    cardBg: 'linear-gradient(145deg,#fffbeb,#fef3c7)', border: '#fbbf24',
+    glow: '0 0 40px rgba(251,191,36,0.45), 0 8px 32px rgba(251,191,36,0.2)',
+    labelColor: '#92400e', rankLabel: '#b45309',
+  },
+  2: {
+    avatarSize: 68, platformH: 66, platformBg: 'linear-gradient(180deg,#94a3b8,#64748b)',
+    cardBg: 'linear-gradient(145deg,#f8fafc,#e2e8f0)', border: '#94a3b8',
+    glow: '0 4px 16px rgba(148,163,184,0.3)',
+    labelColor: '#334155', rankLabel: '#475569',
+  },
+  3: {
+    avatarSize: 64, platformH: 50, platformBg: 'linear-gradient(180deg,#cd7c3a,#a85f2a)',
+    cardBg: 'linear-gradient(145deg,#fff7ed,#fed7aa)', border: '#fb923c',
+    glow: '0 4px 16px rgba(251,146,60,0.25)',
+    labelColor: '#9a3412', rankLabel: '#c2410c',
+  },
 }
 
-function PodiumCard({ entry }) {
+
+
+function PodiumCard({ entry, isFirst }) {
   if (!entry) return <div style={{ flex: 1 }} />
-  const p = PODIUM[entry.rank]
+  const p = PODIUM_CONFIG[entry.rank]
   const acceptRate = entry.bugs_submitted > 0
-    ? Math.round((entry.bugs_accepted / entry.bugs_submitted) * 100)
-    : 0
+    ? Math.round((entry.bugs_accepted / entry.bugs_submitted) * 100) : 0
 
   return (
-    <div style={{
-      flex: 1, background: p.bg, border: `2px solid ${p.border}`,
-      borderRadius: 16, padding: '24px 16px', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', gap: 10,
-      boxShadow: entry.rank === 1 ? '0 8px 30px rgba(251,191,36,0.25)' : '0 2px 10px rgba(0,0,0,0.06)',
-      transform: entry.rank === 1 ? 'translateY(-12px)' : 'none',
-    }}>
-      <Avatar user={entry.user} size={p.size} fontSize={Math.round(p.size * 0.38)} />
-      <div style={{ textAlign: 'center' }}>
-        <p style={{ fontSize: 15, fontWeight: 800, color: '#111827', margin: 0 }}>{entry.user.username}</p>
-        <span style={{ background: '#EEF2FF', color: '#4338CA', fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>
-          Level {entry.user.level}
-        </span>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+      {/* Card */}
+      <div style={{
+        width: '100%', background: p.cardBg, border: `2px solid ${p.border}`,
+        borderRadius: 20, padding: entry.rank === 1 ? '24px 16px' : '20px 14px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+        boxShadow: p.glow, position: 'relative', overflow: 'hidden',
+      }}>
+
+<div style={{ position:'relative' }}>
+          <Avatar user={entry.user} size={p.avatarSize} fontSize={Math.round(p.avatarSize * 0.38)} />
+          {entry.rank === 1 && (
+            <div style={{ position:'absolute', inset:-3, borderRadius:'50%', border:'2.5px solid #fbbf24', boxShadow:'0 0 12px rgba(251,191,36,0.5)', pointerEvents:'none' }} />
+          )}
+        </div>
+
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: entry.rank===1?16:14, fontWeight: 800, color: '#111827', margin: '0 0 4px' }}>{entry.user.username}</p>
+          <span style={{ background:'#EEF2FF', color:'#4338CA', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:20 }}>
+            Level {entry.user.level}
+          </span>
+        </div>
+
+        <p style={{ fontSize: entry.rank===1?24:19, fontWeight:900, color:p.labelColor, margin:0, letterSpacing:'-0.5px' }}>
+          {entry.user.points.toLocaleString()} <span style={{ fontSize:entry.rank===1?13:11, fontWeight:700 }}>pts</span>
+        </p>
+
+        <div style={{ display:'flex', gap:10, fontSize:11, color:'#6b7280', textAlign:'center' }}>
+          <span><strong style={{ color:'#374151' }}>{entry.bugs_submitted}</strong> submitted</span>
+          <span>·</span>
+          <span><strong style={{ color:'#16a34a' }}>{acceptRate}%</strong> accepted</span>
+        </div>
       </div>
-      <p style={{ fontSize: 22, fontWeight: 900, color: p.label, margin: 0 }}>
-        {entry.user.points.toLocaleString()} pts
-      </p>
-      <div style={{ display: 'flex', gap: 12, fontSize: 12, color: '#6b7280' }}>
-        <span>{entry.bugs_submitted} submitted</span>
-        <span>·</span>
-        <span>{acceptRate}% accepted</span>
+
+      {/* Platform block */}
+      <div style={{
+        width:'80%', height:p.platformH, background:p.platformBg,
+        borderRadius:'0 0 10px 10px', marginTop: -2,
+        boxShadow: entry.rank===1?'0 8px 20px rgba(251,191,36,0.35)':'0 4px 12px rgba(0,0,0,0.12)',
+        display:'flex', alignItems:'center', justifyContent:'center',
+      }}>
+        <span style={{ fontSize:28, fontWeight:900, color:'rgba(255,255,255,0.6)', letterSpacing:'-1px' }}>
+          #{entry.rank}
+        </span>
       </div>
     </div>
   )
@@ -195,11 +235,13 @@ export default function LeaderboardPage() {
           <>
             {/* Podium — top 3 */}
             {leaderboard.length >= 1 && (
-              <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', marginBottom: 32 }}>
-                <PodiumCard entry={leaderboard[1] ?? null} />
-                <PodiumCard entry={leaderboard[0]} />
-                <PodiumCard entry={leaderboard[2] ?? null} />
-              </div>
+              <>
+<div style={{ display:'flex', gap:16, alignItems:'flex-end', marginBottom:32, padding:'0 8px' }}>
+                  <PodiumCard entry={leaderboard[1] ?? null} />
+                  <PodiumCard entry={leaderboard[0]} isFirst />
+                  <PodiumCard entry={leaderboard[2] ?? null} />
+                </div>
+              </>
             )}
 
             {/* Full table */}
