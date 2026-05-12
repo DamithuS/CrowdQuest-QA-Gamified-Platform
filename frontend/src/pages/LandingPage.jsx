@@ -15,8 +15,8 @@ function HeroIllustration() {
         boxShadow: '0 4px 16px rgba(79,70,229,0.12)',
         display: 'flex', alignItems: 'center', gap: 8,
       }}>
-        <div style={{ width: 30, height: 30, background: '#EEF2FF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2.2">
+        <div style={{ width: 30, height: 30, background: '#F8FAFC', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2.2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeLinecap="round" />
             <circle cx="12" cy="7" r="4" />
           </svg>
@@ -46,7 +46,7 @@ function HeroIllustration() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               {/* Bug icon */}
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M8 2l1.5 1.5" /><path d="M14.5 3.5L16 2" />
                 <path d="M9 7.5C9 5.6 10.3 4 12 4s3 1.6 3 3.5" />
                 <path d="M6.5 9H4a1 1 0 0 0-1 1v.5a1 1 0 0 0 1 1h2.5" />
@@ -79,7 +79,7 @@ function HeroIllustration() {
         boxShadow: '0 4px 16px rgba(79,70,229,0.12)', minWidth: 130,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          <span style={{ fontSize: 13 }}>🏆</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
           <span style={{ fontSize: 12, fontWeight: 700, color: '#374151' }}>Top Testers</span>
         </div>
         {[['AlphaTester', '#fde68a'], ['BugGuru', '#a5b4fc'], ['QTracker', '#6ee7b7']].map(([name, dot], i) => (
@@ -107,10 +107,14 @@ function HeroIllustration() {
       </div>
 
       {/* Trophy */}
-      <div style={{ position: 'absolute', bottom: 8, right: 30, fontSize: 36, opacity: 0.75, zIndex: 5 }}>🏆</div>
+      <div style={{ position: 'absolute', bottom: 8, right: 30, opacity: 0.75, zIndex: 5 }}>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#A5B4FC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      </div>
 
       {/* Shield badge */}
-      <div style={{ position: 'absolute', bottom: 8, right: -10, fontSize: 28, opacity: 0.5, zIndex: 4 }}>🛡️</div>
+      <div style={{ position: 'absolute', bottom: 8, right: -10, opacity: 0.5, zIndex: 4 }}>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A5B4FC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
     </div>
   )
 }
@@ -178,27 +182,28 @@ const W = { maxWidth: 1200, margin: '0 auto', padding: '0 32px' }
 export default function LandingPage() {
   const { user } = useAuth()
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#EEF2FF' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#ECEEF5' }}>
       <Navbar />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #312E81 100%)', width: '100%' }}>
       <section style={{ ...W, width: '100%', padding: '72px 32px 80px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center' }}>
         {/* Left copy */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <img src="/Logo.png" alt="CrowdQuestQA" style={{ width: 280, height: 'auto' }} />
-          <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-1.5px', color: '#1e1b4b' }}>
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ width: 280, height: 'auto', filter: 'brightness(0) invert(1)' }} />
+          <h1 style={{ fontSize: 56, fontWeight: 900, lineHeight: 1.1, letterSpacing: '-1.5px', color: '#F1F5F9' }}>
             Find Bugs.<br />
             Earn Points.<br />
-            <span style={{ color: '#4F46E5' }}>Improve Software.</span>
+            <span style={{ color: '#A5B4FC' }}>Improve Software.</span>
           </h1>
-          <p style={{ fontSize: 16, color: '#6b7280', lineHeight: 1.7, maxWidth: 420 }}>
+          <p style={{ fontSize: 16, color: '#94A3B8', lineHeight: 1.7, maxWidth: 420 }}>
             CrowdQuestQA is a gamified platform where testers like you find bugs,
             earn rewards, and help build better software for everyone.
           </p>
           <div>
             <Link to={user ? '/submit-bug' : '/login'} style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: '#4338CA', color: '#fff', fontWeight: 700,
+              background: '#6366F1', color: '#fff', fontWeight: 700,
               fontSize: 15, padding: '13px 28px', borderRadius: 10,
               textDecoration: 'none', border: 'none',
             }}>
@@ -213,6 +218,7 @@ export default function LandingPage() {
         {/* Right illustration */}
         <HeroIllustration />
       </section>
+      </div>
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <section style={{ background: '#fff', padding: '64px 0' }}>
@@ -223,8 +229,8 @@ export default function LandingPage() {
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 0 }}>
             <StepCard
               number="1"
-              iconBg="#4338CA"
-              iconStroke="#4338CA"
+              iconBg="#6366F1"
+              iconStroke="#6366F1"
               icon={<><path d="M8 2l1.5 1.5"/><path d="M14.5 3.5L16 2"/><path d="M9 7.5C9 5.6 10.3 4 12 4s3 1.6 3 3.5"/><path d="M6.5 9H4a1 1 0 0 0-1 1v.5a1 1 0 0 0 1 1h2.5"/><path d="M17.5 9H20a1 1 0 0 1 1 1v.5a1 1 0 0 1-1 1h-2.5"/><rect x="9" y="7" width="6" height="13" rx="3"/><path d="M9 12h6"/></>}
               title="Report Bugs"
               description="Submit structured bug reports with steps, screenshots, and device details."
@@ -260,7 +266,7 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
             <FeatureCard
               iconBg="#e0e7ff"
-              iconStroke="#4F46E5"
+              iconStroke="#6366F1"
               icon={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></>}
               title="Report Bugs"
               description="Submit structured bug reports with steps, screenshots and device details."

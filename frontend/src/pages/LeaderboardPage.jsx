@@ -9,12 +9,12 @@ const API = 'http://localhost:8000'
 // ── Top bar (logged-in layout) ────────────────────────────────────────────────
 function TopBar({ user }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
+    <div style={{ height: 64, background: '#080D18', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar user={user} size={36} />
         <div>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: 0 }}>{user?.username}</p>
-          <p style={{ fontSize: 11, color: '#6b7280', margin: 0 }}>Level {user?.level}</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', margin: 0 }}>{user?.username}</p>
+          <p style={{ fontSize: 11, color: '#94A3B8', margin: 0 }}>Level {user?.level}</p>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@ function PodiumCard({ entry, isFirst }) {
 
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: entry.rank===1?16:14, fontWeight: 800, color: '#111827', margin: '0 0 4px' }}>{entry.user.username}</p>
-          <span style={{ background:'#EEF2FF', color:'#4338CA', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:20 }}>
+          <span style={{ background:'#EEF2FF', color:'#6366F1', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:20 }}>
             Level {entry.user.level}
           </span>
         </div>
@@ -108,9 +108,7 @@ function TableRow({ entry, isCurrentUser }) {
     ? Math.round((entry.bugs_accepted / entry.bugs_submitted) * 100)
     : 0
 
-  const rankBadge = entry.rank <= 3
-    ? ['', '🥇', '🥈', '🥉'][entry.rank]
-    : null
+  const rankColor = entry.rank === 1 ? '#F59E0B' : entry.rank === 2 ? '#94A3B8' : entry.rank === 3 ? '#D97706' : null
 
   return (
     <tr style={{
@@ -123,10 +121,10 @@ function TableRow({ entry, isCurrentUser }) {
     >
       {/* Rank */}
       <td style={{ padding: '14px 20px', width: 60 }}>
-        {rankBadge ? (
-          <span style={{ fontSize: 20 }}>{rankBadge}</span>
+        {rankColor ? (
+          <span style={{ fontSize: 14, fontWeight: 800, color: rankColor }}>#{entry.rank}</span>
         ) : (
-          <span style={{ fontSize: 14, fontWeight: 700, color: isCurrentUser ? '#4338CA' : '#6b7280' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: isCurrentUser ? '#6366F1' : '#111827' }}>
             #{entry.rank}
           </span>
         )}
@@ -140,7 +138,7 @@ function TableRow({ entry, isCurrentUser }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{entry.user.username}</span>
               {isCurrentUser && (
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#4338CA', background: '#EEF2FF', padding: '1px 7px', borderRadius: 20 }}>You</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#6366F1', background: '#EEF2FF', padding: '1px 7px', borderRadius: 20 }}>You</span>
               )}
             </div>
             <span style={{ fontSize: 12, color: '#9ca3af' }}>Level {entry.user.level}</span>
@@ -150,7 +148,7 @@ function TableRow({ entry, isCurrentUser }) {
 
       {/* Points */}
       <td style={{ padding: '14px 12px', textAlign: 'right' }}>
-        <span style={{ fontSize: 15, fontWeight: 800, color: isCurrentUser ? '#4338CA' : '#111827' }}>
+        <span style={{ fontSize: 15, fontWeight: 800, color: isCurrentUser ? '#6366F1' : '#111827' }}>
           {entry.user.points.toLocaleString()}
         </span>
       </td>
@@ -169,7 +167,7 @@ function TableRow({ entry, isCurrentUser }) {
       <td style={{ padding: '14px 20px', textAlign: 'center' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <div style={{ width: 50, height: 6, background: '#e5e7eb', borderRadius: 999 }}>
-            <div style={{ height: '100%', width: `${acceptRate}%`, background: '#4338CA', borderRadius: 999 }} />
+            <div style={{ height: '100%', width: `${acceptRate}%`, background: '#6366F1', borderRadius: 999 }} />
           </div>
           <span style={{ fontSize: 12, color: '#6b7280', width: 32 }}>{acceptRate}%</span>
         </div>
@@ -224,7 +222,7 @@ export default function LeaderboardPage() {
         ) : leaderboard.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px 0' }}>
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
               </svg>
             </div>
@@ -248,7 +246,7 @@ export default function LeaderboardPage() {
             <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 1px 6px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                  <tr style={{ background: '#f9fafb', borderBottom: '1px solid #E2E8F0' }}>
                     <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', width: 60 }}>Rank</th>
                     <th style={{ padding: '12px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280' }}>User</th>
                     <th style={{ padding: '12px 12px', textAlign: 'right', fontSize: 12, fontWeight: 600, color: '#6b7280' }}>Points</th>
@@ -277,7 +275,7 @@ export default function LeaderboardPage() {
   // Logged-in layout: Sidebar + TopBar
   if (user) {
     return (
-      <div style={{ display: 'flex', height: '100vh', background: '#F8F9FF', fontFamily: 'Inter, system-ui, sans-serif' }}>
+      <div style={{ display: 'flex', height: '100vh', background: '#ECEEF5', fontFamily: 'Inter, system-ui, sans-serif' }}>
         <Sidebar />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <TopBar user={user} />
@@ -289,7 +287,7 @@ export default function LeaderboardPage() {
 
   // Public layout: Navbar
   return (
-    <div style={{ minHeight: '100vh', background: '#F8F9FF', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#ECEEF5', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <Navbar activePage="leaderboard" />
       {content}
     </div>

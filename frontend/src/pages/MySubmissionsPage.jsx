@@ -20,7 +20,7 @@ const timeAgo = (dateStr) => {
 const fmtDate = (d) => parseDate(d).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
 
 const STATUS_CONFIG = {
-  pending:      { label: 'Pending',      bg: '#e0e7ff', color: '#4338CA' },
+  pending:      { label: 'Pending',      bg: '#e0e7ff', color: '#6366F1' },
   under_review: { label: 'Under Review', bg: '#fef9c3', color: '#92400e' },
   accepted:     { label: 'Accepted',     bg: '#dcfce7', color: '#15803d' },
   rejected:     { label: 'Rejected',     bg: '#fee2e2', color: '#dc2626' },
@@ -36,12 +36,12 @@ const SEVERITY_CONFIG = {
 // ── Top bar ───────────────────────────────────────────────────────────────────
 function TopBar({ user }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
+    <div style={{ height: 64, background: '#080D18', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar user={user} size={36} />
         <div>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: 0 }}>{user?.username}</p>
-          <p style={{ fontSize: 11, color: '#6b7280', margin: 0 }}>Level {user?.level}</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', margin: 0 }}>{user?.username}</p>
+          <p style={{ fontSize: 11, color: '#94A3B8', margin: 0 }}>Level {user?.level}</p>
         </div>
       </div>
     </div>
@@ -88,7 +88,7 @@ function DetailModal({ report, onClose }) {
         {/* Points banner */}
         {report.points_awarded && (
           <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '10px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 18 }}>🎉</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#15803d' }}>+{report.points_awarded} points earned</span>
           </div>
         )}
@@ -136,7 +136,7 @@ function ReportRow({ report, onClick }) {
       <td style={{ padding: '14px 20px', fontSize: 13, fontWeight: 600, color: '#9ca3af', width: 60 }}>#{report.id}</td>
       <td style={{ padding: '14px 12px', maxWidth: 280 }}>
         <p style={{ fontSize: 14, fontWeight: 600, color: '#111827', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{report.title}</p>
-        {report.website_name && <p style={{ fontSize: 12, color: '#4338CA', margin: '2px 0 0', fontWeight: 600 }}>{report.website_name}</p>}
+        {report.website_name && <p style={{ fontSize: 12, color: '#9ca3af', margin: '2px 0 0' }}>{report.website_name}</p>}
         {!report.website_name && report.environment && <p style={{ fontSize: 12, color: '#9ca3af', margin: '2px 0 0' }}>{report.environment}</p>}
       </td>
       <td style={{ padding: '14px 12px' }}>
@@ -198,7 +198,7 @@ export default function MySubmissionsPage() {
   ]
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#F8F9FF', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#ECEEF5', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -214,8 +214,8 @@ export default function MySubmissionsPage() {
 
           {/* Summary cards */}
           <div style={{ display: 'flex', gap: 14, marginBottom: 24 }}>
-            <SummaryCard label="Total Submitted" value={counts.total}        bg="#EEF2FF" color="#4338CA" />
-            <SummaryCard label="Pending"         value={counts.pending}      bg="#e0e7ff" color="#4338CA" />
+            <SummaryCard label="Total Submitted" value={counts.total}        bg="#EEF2FF" color="#6366F1" />
+            <SummaryCard label="Pending"         value={counts.pending}      bg="#e0e7ff" color="#6366F1" />
             <SummaryCard label="Under Review"    value={counts.under_review} bg="#fef9c3" color="#92400e" />
             <SummaryCard label="Accepted"        value={counts.accepted}     bg="#dcfce7" color="#15803d" />
             <SummaryCard label="Rejected"        value={counts.rejected}     bg="#fee2e2" color="#dc2626" />
@@ -231,7 +231,7 @@ export default function MySubmissionsPage() {
                   <button key={tab.key} onClick={() => setStatusFilter(tab.key)} style={{
                     padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit',
                     fontSize: 13, fontWeight: 600, transition: 'all 0.15s',
-                    background: statusFilter === tab.key ? '#4338CA' : 'transparent',
+                    background: statusFilter === tab.key ? '#6366F1' : 'transparent',
                     color: statusFilter === tab.key ? '#fff' : '#6b7280',
                   }}>
                     {tab.label}
@@ -280,7 +280,6 @@ export default function MySubmissionsPage() {
               </div>
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 0' }}>
-                <span style={{ fontSize: 40 }}>🐛</span>
                 <p style={{ fontSize: 15, fontWeight: 600, color: '#374151', margin: '12px 0 4px' }}>
                   {reports.length === 0 ? 'No submissions yet' : 'No reports match your filters'}
                 </p>
@@ -291,7 +290,7 @@ export default function MySubmissionsPage() {
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                  <tr style={{ background: '#f9fafb', borderBottom: '1px solid #E2E8F0' }}>
                     <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', width: 60 }}>ID</th>
                     <th style={{ padding: '12px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280' }}>Title</th>
                     <th style={{ padding: '12px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280' }}>Severity</th>

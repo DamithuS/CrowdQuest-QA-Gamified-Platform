@@ -36,31 +36,34 @@ export default function Sidebar() {
 
   return (
     <aside style={{
-      width: 240, flexShrink: 0, background: '#fff',
-      borderRight: '1px solid #e5e7eb', display: 'flex',
-      flexDirection: 'column', height: '100vh',
+      width: 240, flexShrink: 0,
+      background: '#080D18',
+      display: 'flex', flexDirection: 'column', height: '100vh',
       position: 'sticky', top: 0,
     }}>
       {/* Logo */}
-      <div style={{ padding: '4px 16px', borderBottom: '1px solid #f3f4f6' }}>
+      <div style={{ padding: '12px 16px 4px' }}>
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-          <img src="/Logo.png" alt="CrowdQuestQA" style={{ width: '180px', height: 'auto', display: 'block' }} />
+          <img src="/Logo.png" alt="CrowdQuestQA" style={{ width: '180px', height: 'auto', display: 'block', filter: 'brightness(0) invert(1)' }} />
         </Link>
       </div>
 
       {/* Nav links */}
-      <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <nav style={{ flex: 1, padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
         {NAV.map(({ to, label, icon }) => {
           const active = location.pathname === to
           return (
             <Link key={to} to={to} style={{
               display: 'flex', alignItems: 'center', gap: 12,
               padding: '10px 14px', borderRadius: 10, textDecoration: 'none',
-              fontSize: 14, fontWeight: active ? 600 : 500,
-              color: active ? '#4338CA' : '#6b7280',
-              background: active ? '#EEF2FF' : 'transparent',
+              fontSize: 14, fontWeight: active ? 600 : 400,
+              color: active ? '#A5B4FC' : '#64748B',
+              background: active ? 'rgba(99,102,241,0.15)' : 'transparent',
               transition: 'all 0.15s',
-            }}>
+            }}
+            onMouseEnter={e => { if (!active) { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#94A3B8' } }}
+            onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748B' } }}
+            >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {icon}
               </svg>
@@ -71,13 +74,16 @@ export default function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div style={{ padding: '12px 12px 20px' }}>
+      <div style={{ padding: '12px 12px 20px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <button onClick={handleLogout} style={{
           width: '100%', display: 'flex', alignItems: 'center', gap: 12,
           padding: '10px 14px', borderRadius: 10, border: 'none',
           background: 'transparent', cursor: 'pointer', fontFamily: 'inherit',
-          fontSize: 14, fontWeight: 500, color: '#6b7280',
-        }}>
+          fontSize: 14, fontWeight: 400, color: '#64748B',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#94A3B8' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#64748B' }}
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/>

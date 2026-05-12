@@ -17,7 +17,7 @@ export default function Avatar({ user, size = 36, fontSize }) {
   return (
     <div style={{
       width: dim, height: dim, borderRadius: '50%',
-      background: user?.avatar_color || '#4338CA',
+      background: user?.avatar_color || '#6366F1',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       color: '#fff', fontWeight: 700, fontSize: fs, flexShrink: 0,
     }}>

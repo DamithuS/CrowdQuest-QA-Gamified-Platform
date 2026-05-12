@@ -18,12 +18,12 @@ const ENVIRONMENT_OPTIONS = ['Windows', 'macOS', 'Linux', 'Android', 'iOS', 'Web
 // ── Top bar ───────────────────────────────────────────────────────────────────
 function TopBar({ user }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
+    <div style={{ height: 64, background: '#080D18', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <Avatar user={user} size={36} />
         <div>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: 0 }}>{user?.username}</p>
-          <p style={{ fontSize: 11, color: '#6b7280', margin: 0 }}>Level {user?.level}</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', margin: 0 }}>{user?.username}</p>
+          <p style={{ fontSize: 11, color: '#94A3B8', margin: 0 }}>Level {user?.level}</p>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@ function SuccessScreen({ report, onAnother, onView }) {
       </p>
       <p style={{ fontSize: 13, color: '#9ca3af', margin: '0 0 32px' }}>Bug #{report.id} · Status: Pending review</p>
       <div style={{ background: '#EEF2FF', borderRadius: 12, padding: '14px 24px', marginBottom: 32 }}>
-        <p style={{ fontSize: 13, color: '#4338CA', fontWeight: 600, margin: 0 }}>
+        <p style={{ fontSize: 13, color: '#6366F1', fontWeight: 600, margin: 0 }}>
           You'll earn points once your report is reviewed and accepted.
         </p>
       </div>
@@ -75,7 +75,7 @@ function SuccessScreen({ report, onAnother, onView }) {
         <button onClick={onAnother} style={{ padding: '10px 24px', border: '1.5px solid #e5e7eb', borderRadius: 8, background: '#fff', fontSize: 14, fontWeight: 600, color: '#374151', cursor: 'pointer', fontFamily: 'inherit' }}>
           Submit Another
         </button>
-        <button onClick={onView} style={{ padding: '10px 24px', background: '#4338CA', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>
+        <button onClick={onView} style={{ padding: '10px 24px', background: '#6366F1', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#fff', cursor: 'pointer', fontFamily: 'inherit' }}>
           View My Submissions
         </button>
       </div>
@@ -194,7 +194,7 @@ export default function SubmitBugPage() {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#F8F9FF', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#ECEEF5', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <Sidebar />
 
@@ -239,7 +239,7 @@ export default function SubmitBugPage() {
                       maxLength={200}
                       placeholder="e.g. GitHub, Spotify, Amazon"
                       style={inputStyle(!!errors.website_name)}
-                      onFocus={e => e.target.style.borderColor = '#4338CA'}
+                      onFocus={e => e.target.style.borderColor = '#6366F1'}
                       onBlur={e => e.target.style.borderColor = errors.website_name ? '#fca5a5' : '#e5e7eb'}
                     />
                   </FormField>
@@ -252,7 +252,7 @@ export default function SubmitBugPage() {
                       maxLength={200}
                       placeholder="e.g. Login button unresponsive on mobile"
                       style={inputStyle(!!errors.title)}
-                      onFocus={e => e.target.style.borderColor = '#4338CA'}
+                      onFocus={e => e.target.style.borderColor = '#6366F1'}
                       onBlur={e => e.target.style.borderColor = errors.title ? '#fca5a5' : '#e5e7eb'}
                     />
                   </FormField>
@@ -265,7 +265,7 @@ export default function SubmitBugPage() {
                       rows={4}
                       placeholder="Describe the bug in detail — what happened vs. what you expected"
                       style={{ ...inputStyle(!!errors.description), resize: 'vertical' }}
-                      onFocus={e => e.target.style.borderColor = '#4338CA'}
+                      onFocus={e => e.target.style.borderColor = '#6366F1'}
                       onBlur={e => e.target.style.borderColor = errors.description ? '#fca5a5' : '#e5e7eb'}
                     />
                   </FormField>
@@ -278,7 +278,7 @@ export default function SubmitBugPage() {
                       rows={4}
                       placeholder={"1. Go to the login page\n2. Enter valid credentials\n3. Click the Login button\n4. Nothing happens"}
                       style={{ ...inputStyle(!!errors.steps_to_reproduce), resize: 'vertical' }}
-                      onFocus={e => e.target.style.borderColor = '#4338CA'}
+                      onFocus={e => e.target.style.borderColor = '#6366F1'}
                       onBlur={e => e.target.style.borderColor = errors.steps_to_reproduce ? '#fca5a5' : '#e5e7eb'}
                     />
                   </FormField>
@@ -290,7 +290,7 @@ export default function SubmitBugPage() {
                         value={form.environment}
                         onChange={e => set('environment', e.target.value)}
                         style={{ ...inputStyle(false), cursor: 'pointer' }}
-                        onFocus={e => e.target.style.borderColor = '#4338CA'}
+                        onFocus={e => e.target.style.borderColor = '#6366F1'}
                         onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                       >
                         <option value="">Select platform…</option>
@@ -304,7 +304,7 @@ export default function SubmitBugPage() {
                         onChange={e => set('device_browser', e.target.value)}
                         placeholder="e.g. Chrome 124, iPhone 15"
                         style={inputStyle(false)}
-                        onFocus={e => e.target.style.borderColor = '#4338CA'}
+                        onFocus={e => e.target.style.borderColor = '#6366F1'}
                         onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </FormField>
@@ -315,7 +315,7 @@ export default function SubmitBugPage() {
                         onChange={e => set('version', e.target.value)}
                         placeholder="e.g. v2.1.4"
                         style={inputStyle(false)}
-                        onFocus={e => e.target.style.borderColor = '#4338CA'}
+                        onFocus={e => e.target.style.borderColor = '#6366F1'}
                         onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </FormField>
@@ -326,7 +326,7 @@ export default function SubmitBugPage() {
                         onChange={e => set('screenshot_url', e.target.value)}
                         placeholder="https://"
                         style={inputStyle(false)}
-                        onFocus={e => e.target.style.borderColor = '#4338CA'}
+                        onFocus={e => e.target.style.borderColor = '#6366F1'}
                         onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                       />
                     </FormField>
@@ -349,8 +349,8 @@ export default function SubmitBugPage() {
                         style={{
                           display: 'flex', alignItems: 'center', gap: 6,
                           padding: '6px 12px', borderRadius: 8, cursor: aiDetecting ? 'not-allowed' : 'pointer',
-                          border: '1.5px solid #4338CA', background: aiDetecting ? '#EEF2FF' : '#4338CA',
-                          fontSize: 12, fontWeight: 600, color: aiDetecting ? '#4338CA' : '#fff',
+                          border: '1.5px solid #6366F1', background: aiDetecting ? '#EEF2FF' : '#6366F1',
+                          fontSize: 12, fontWeight: 600, color: aiDetecting ? '#6366F1' : '#fff',
                           fontFamily: 'inherit', transition: 'all 0.15s',
                         }}
                       >
@@ -389,7 +389,7 @@ export default function SubmitBugPage() {
                             <p style={{ fontSize: 13, fontWeight: 700, color: form.severity === opt.value ? opt.color : '#374151', margin: 0 }}>
                               {opt.label}
                               {aiSuggestion?.severity === opt.value && (
-                                <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, color: '#4338CA', background: '#EEF2FF', padding: '1px 6px', borderRadius: 20 }}>AI</span>
+                                <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, color: '#6366F1', background: '#EEF2FF', padding: '1px 6px', borderRadius: 20 }}>AI</span>
                               )}
                             </p>
                             <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>{opt.desc}</p>
@@ -405,12 +405,12 @@ export default function SubmitBugPage() {
 
                     {/* AI suggestion reasoning */}
                     {aiSuggestion && (
-                      <div style={{ marginTop: 14, padding: '12px 14px', background: '#EEF2FF', borderRadius: 10, borderLeft: '3px solid #4338CA' }}>
+                      <div style={{ marginTop: 14, padding: '12px 14px', background: '#EEF2FF', borderRadius: 10, borderLeft: '3px solid #6366F1' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2.5" strokeLinecap="round">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2.5" strokeLinecap="round">
                             <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
                           </svg>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#4338CA' }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#6366F1' }}>
                             AI Suggestion · Confidence: {aiSuggestion.confidence}
                           </span>
                         </div>
@@ -427,7 +427,7 @@ export default function SubmitBugPage() {
                   {/* Points info */}
                   <div style={{ background: '#EEF2FF', borderRadius: 16, padding: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                      <div style={{ width: 36, height: 36, borderRadius: 8, background: '#4338CA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 8, background: '#6366F1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
                           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                         </svg>
@@ -437,7 +437,7 @@ export default function SubmitBugPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                       {[['Under Review', '+20 pts'], ['Accepted', '+50 pts']].map(([s, p]) => (
                         <div key={s} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                          <span style={{ color: '#4338CA' }}>{s}</span>
+                          <span style={{ color: '#6366F1' }}>{s}</span>
                           <span style={{ fontWeight: 700, color: '#1e1b4b' }}>{p}</span>
                         </div>
                       ))}
@@ -449,7 +449,7 @@ export default function SubmitBugPage() {
                     type="submit"
                     disabled={submitting}
                     style={{
-                      width: '100%', padding: '14px', background: submitting ? '#9ca3af' : '#4338CA',
+                      width: '100%', padding: '14px', background: submitting ? '#9ca3af' : '#6366F1',
                       border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 700,
                       color: '#fff', cursor: submitting ? 'not-allowed' : 'pointer',
                       fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

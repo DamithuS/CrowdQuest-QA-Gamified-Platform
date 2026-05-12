@@ -22,17 +22,16 @@ const timeAgo = (dateStr) => {
 // ── Top header bar ────────────────────────────────────────────────────────────
 function TopBar({ user, notifCount }) {
   return (
-    <div style={{ height: 64, background: '#fff', borderBottom: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
+    <div style={{ height: 64, background: '#080D18', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         {/* User avatar */}
-        <Link to="/profile" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Avatar user={user} size={36} />
           <div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: 0 }}>{user?.username}</p>
-            <p style={{ fontSize: 11, color: '#6b7280', margin: 0 }}>Level {user?.level}</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9', margin: 0 }}>{user?.username}</p>
+            <p style={{ fontSize: 11, color: '#94A3B8', margin: 0 }}>Level {user?.level}</p>
           </div>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </Link>
+        </div>
       </div>
     </div>
   )
@@ -58,7 +57,7 @@ function ActivityRow({ report }) {
   const statusConfig = {
     accepted:     { bg: '#dcfce7', stroke: '#16a34a', icon: <polyline points="20 6 9 17 4 12"/>, label: 'accepted', pts: report.points_awarded },
     under_review: { bg: '#fef9c3', stroke: '#ca8a04', icon: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>, label: 'pending review', pts: null },
-    pending:      { bg: '#e0e7ff', stroke: '#4338CA', icon: <><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>, label: 'submitted', pts: null },
+    pending:      { bg: '#e0e7ff', stroke: '#6366F1', icon: <><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>, label: 'submitted', pts: null },
     rejected:     { bg: '#fee2e2', stroke: '#dc2626', icon: <><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></>, label: 'rejected', pts: null },
   }
   const cfg = statusConfig[report.status] || statusConfig.pending
@@ -94,10 +93,10 @@ function XPBar({ xp, level }) {
         <span style={{ fontSize: 12, color: '#6b7280' }}>{currentLevelXP} / {XP_PER_LEVEL} XP</span>
       </div>
       <div style={{ height: 10, background: '#e5e7eb', borderRadius: 999 }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #4338CA, #6366f1)', borderRadius: 999, transition: 'width 0.6s ease' }} />
+        <div style={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg, #6366F1, #6366f1)', borderRadius: 999, transition: 'width 0.6s ease' }} />
       </div>
       <div style={{ background: '#EEF2FF', borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{ width: 40, height: 40, background: '#4338CA', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 40, height: 40, background: '#6366F1', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
             <path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
@@ -109,7 +108,7 @@ function XPBar({ xp, level }) {
         </div>
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
           <p style={{ fontSize: 11, color: '#6b7280', margin: 0 }}>Progress</p>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#4338CA', margin: 0 }}>{currentLevelXP} / {XP_PER_LEVEL} XP</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#6366F1', margin: 0 }}>{currentLevelXP} / {XP_PER_LEVEL} XP</p>
         </div>
       </div>
     </div>
@@ -162,7 +161,7 @@ export default function DashboardPage() {
   const recentActivity = reports.slice(0, 4)
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#F8F9FF', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#ECEEF5', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -174,7 +173,7 @@ export default function DashboardPage() {
           {/* Welcome heading */}
           <div style={{ marginBottom: 28 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: '#111827', margin: 0 }}>
-              Welcome back, {user?.username}! 👋
+              Welcome back, {user?.username}!
             </h1>
             <p style={{ fontSize: 14, color: '#6b7280', margin: '4px 0 0' }}>Here's what's happening today.</p>
           </div>
@@ -182,7 +181,7 @@ export default function DashboardPage() {
           {/* Stat cards */}
           <div style={{ display: 'flex', gap: 20, marginBottom: 28 }}>
             <StatCard
-              iconBg="#EEF2FF" iconStroke="#4338CA"
+              iconBg="#EEF2FF" iconStroke="#6366F1"
               icon={<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>}
               label="Total Points" value={loading ? '—' : displayUser?.points ?? 0}
             />
@@ -228,7 +227,7 @@ export default function DashboardPage() {
               ) : recentActivity.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '36px 0' }}>
                   <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4338CA" strokeWidth="2" strokeLinecap="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round">
                       <path d="M8 2l1.5 1.5"/><path d="M14.5 3.5L16 2"/>
                       <path d="M9 7.5C9 5.6 10.3 4 12 4s3 1.6 3 3.5"/>
                       <rect x="9" y="7" width="6" height="13" rx="3"/>
@@ -251,12 +250,14 @@ export default function DashboardPage() {
 
           {/* Found a bug CTA */}
           <div style={{ background: '#fff', borderRadius: 16, padding: '24px 32px', boxShadow: '0 1px 6px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: 24 }}>
-            <div style={{ fontSize: 48 }}>📁</div>
+            <div style={{ width: 48, height: 48, flexShrink: 0 }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="48" height="48"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </div>
             <div style={{ flex: 1 }}>
               <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Found a bug?</h3>
               <p style={{ fontSize: 13, color: '#6b7280', margin: 0 }}>Help improve software quality by submitting a new bug report.</p>
             </div>
-            <Link to="/submit-bug" style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#4338CA', color: '#fff', padding: '12px 24px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
+            <Link to="/submit-bug" style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#6366F1', color: '#fff', padding: '12px 24px', borderRadius: 10, textDecoration: 'none', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M8 2l1.5 1.5"/><path d="M14.5 3.5L16 2"/>
                 <path d="M9 7.5C9 5.6 10.3 4 12 4s3 1.6 3 3.5"/>
