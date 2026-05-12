@@ -14,14 +14,14 @@ from groq import AsyncGroq
 import os
 
 from database import get_db, AsyncSessionLocal
-from models import User, BugReport, Badge, UserBadge, Notification, StatusEnum
+from models import User, BugReport, StatusEnum
 
 UPLOAD_DIR = Path(__file__).parent / "uploads" / "avatars"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 from schemas import (
     UserCreate, UserUpdate, UserOut, UserPublic,
     LoginRequest, BugReportCreate, BugReportOut, BugReportStatusUpdate,
-    NotificationOut, LeaderboardEntry, SeverityDetectRequest,
+    LeaderboardEntry, SeverityDetectRequest,
 )
 
 app = FastAPI(
@@ -125,14 +125,6 @@ async def auto_review_report(report_id: int):
                     await db.execute(
                         sql_update(User).where(User.id == report.submitted_by_id).values(level=new_level)
                     )
-            notif_msg = f'Your report "{report.title[:50]}" was {new_status.replace("_", " ")}!'
-            if pts:
-                notif_msg += f' +{pts} points'
-            db.add(Notification(
-                user_id=report.submitted_by_id,
-                message=notif_msg,
-                type="success" if new_status == "accepted" else "info",
-            ))
             await db.commit()
         except Exception:
             pass
@@ -321,13 +313,6 @@ async def update_report_status(
             user.xp += pts
             user.level = calculate_level(user.xp)
 
-            notif = Notification(
-                user_id=user.id,
-                message=f'Your report "{report.title}" was {payload.status.value}! +{pts} points',
-                type="success" if payload.status == StatusEnum.accepted else "info",
-            )
-            db.add(notif)
-
     await db.commit()
     await db.refresh(report, ["submitter"])
     return report
@@ -373,29 +358,6 @@ async def get_leaderboard(db: AsyncSession = Depends(get_db)):
             "bugs_accepted": accepted,
         })
     return leaderboard
-
-
-# ── Notifications ─────────────────────────────────────────────────────────────
-
-@app.get("/users/{user_id}/notifications", response_model=list[NotificationOut])
-async def get_notifications(user_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(Notification)
-        .where(Notification.user_id == user_id)
-        .order_by(Notification.created_at.desc())
-    )
-    return result.scalars().all()
-
-
-@app.patch("/users/{user_id}/notifications/read")
-async def mark_all_read(user_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(Notification).where(Notification.user_id == user_id, Notification.is_read == False)
-    )
-    for n in result.scalars().all():
-        n.is_read = True
-    await db.commit()
-    return {"message": "All notifications marked as read"}
 
 
 # ── AI ────────────────────────────────────────────────────────────────────────

@@ -49,11 +49,6 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-class TokenOut(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-
-
 # ── Bug Report ────────────────────────────────────────────────────────────────
 class BugReportCreate(BaseModel):
     title: str = Field(..., min_length=5, max_length=200)
@@ -93,17 +88,6 @@ class BugReportStatusUpdate(BaseModel):
     quality_score: Optional[float] = None
 
 
-# ── Badge ─────────────────────────────────────────────────────────────────────
-class BadgeOut(BaseModel):
-    id: int
-    name: str
-    description: Optional[str]
-    icon: Optional[str]
-    earned_at: datetime
-
-    model_config = {"from_attributes": True}
-
-
 # ── Leaderboard ───────────────────────────────────────────────────────────────
 class LeaderboardEntry(BaseModel):
     rank: int
@@ -120,13 +104,3 @@ class SeverityDetectRequest(BaseModel):
     description: str
     steps_to_reproduce: str
 
-
-# ── Notification ──────────────────────────────────────────────────────────────
-class NotificationOut(BaseModel):
-    id: int
-    message: str
-    type: str
-    is_read: bool
-    created_at: datetime
-
-    model_config = {"from_attributes": True}

@@ -20,7 +20,7 @@ const timeAgo = (dateStr) => {
 }
 
 // ── Top header bar ────────────────────────────────────────────────────────────
-function TopBar({ user, notifCount }) {
+function TopBar({ user }) {
   return (
     <div style={{ height: 64, background: '#080D18', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 32px', flexShrink: 0 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
@@ -120,7 +120,6 @@ export default function DashboardPage() {
   const { user, updateUser } = useAuth()
   const [reports, setReports] = useState([])
   const [rank, setRank] = useState(null)
-  const [notifCount, setNotifCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [freshUser, setFreshUser] = useState(null)
 
@@ -128,21 +127,18 @@ export default function DashboardPage() {
     if (!user) return
     async function load() {
       try {
-        const [reportsRes, leaderboardRes, notifRes, userRes] = await Promise.all([
+        const [reportsRes, leaderboardRes, userRes] = await Promise.all([
           fetch(`${API}/users/${user.id}/reports`),
           fetch(`${API}/leaderboard`),
-          fetch(`${API}/users/${user.id}/notifications`),
           fetch(`${API}/users/${user.id}`),
         ])
         const reportsData = await reportsRes.json()
         const leaderboard = await leaderboardRes.json()
-        const notifs = await notifRes.json()
         const userData = await userRes.json()
 
         setReports(Array.isArray(reportsData) ? reportsData : [])
         const entry = leaderboard.find(e => e.user.id === user.id)
-        setRank(entry ? entry.rank : '—')
-        setNotifCount(notifs.filter(n => !n.is_read).length)
+        setRank(entry ? entry.rank : '–')
         if (userData?.id) {
           setFreshUser(userData)
           updateUser(userData)
@@ -165,7 +161,7 @@ export default function DashboardPage() {
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <TopBar user={user} notifCount={notifCount} />
+        <TopBar user={user} />
 
         {/* Scrollable body */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
@@ -183,22 +179,22 @@ export default function DashboardPage() {
             <StatCard
               iconBg="#EEF2FF" iconStroke="#6366F1"
               icon={<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>}
-              label="Total Points" value={loading ? '—' : displayUser?.points ?? 0}
+              label="Total Points" value={loading ? '–' : displayUser?.points ?? 0}
             />
             <StatCard
               iconBg="#fef9c3" iconStroke="#ca8a04"
               icon={<><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></>}
-              label="Current Rank" value={loading ? '—' : rank ? `#${rank}` : '—'}
+              label="Current Rank" value={loading ? '–' : rank ? `#${rank}` : '–'}
             />
             <StatCard
               iconBg="#dbeafe" iconStroke="#2563eb"
               icon={<><path d="M8 2l1.5 1.5"/><path d="M14.5 3.5L16 2"/><path d="M9 7.5C9 5.6 10.3 4 12 4s3 1.6 3 3.5"/><path d="M6.5 9H4a1 1 0 0 0-1 1v.5a1 1 0 0 0 1 1h2.5"/><path d="M17.5 9H20a1 1 0 0 1 1 1v.5a1 1 0 0 1-1 1h-2.5"/><rect x="9" y="7" width="6" height="13" rx="3"/><path d="M9 12h6"/></>}
-              label="Bugs Submitted" value={loading ? '—' : reports.length}
+              label="Bugs Submitted" value={loading ? '–' : reports.length}
             />
             <StatCard
               iconBg="#dcfce7" iconStroke="#16a34a"
               icon={<><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>}
-              label="Bugs Accepted" value={loading ? '—' : accepted}
+              label="Bugs Accepted" value={loading ? '–' : accepted}
             />
           </div>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const API = 'http://localhost:8000'
@@ -135,7 +135,8 @@ function Field({ label, type = 'text', value, onChange, placeholder, icon, extra
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function LoginPage() {
-  const [tab, setTab] = useState('login')
+  const { pathname } = useLocation()
+  const [tab, setTab] = useState(pathname === '/register' ? 'register' : 'login')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const { login } = useAuth()

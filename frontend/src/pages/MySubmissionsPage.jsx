@@ -146,7 +146,7 @@ function ReportRow({ report, onClick }) {
         <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: st.bg, color: st.color, whiteSpace: 'nowrap' }}>{st.label}</span>
       </td>
       <td style={{ padding: '14px 12px', fontSize: 13, color: report.points_awarded ? '#15803d' : '#9ca3af', fontWeight: report.points_awarded ? 700 : 400, whiteSpace: 'nowrap' }}>
-        {report.points_awarded ? `+${report.points_awarded} pts` : '—'}
+        {report.points_awarded ? `+${report.points_awarded} pts` : '–'}
       </td>
       <td style={{ padding: '14px 20px', fontSize: 12, color: '#9ca3af', whiteSpace: 'nowrap', textAlign: 'right' }}>
         {timeAgo(report.created_at)}

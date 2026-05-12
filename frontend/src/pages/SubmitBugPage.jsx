@@ -263,7 +263,7 @@ export default function SubmitBugPage() {
                       value={form.description}
                       onChange={e => set('description', e.target.value)}
                       rows={4}
-                      placeholder="Describe the bug in detail — what happened vs. what you expected"
+                      placeholder="Describe the bug in detail – what happened vs. what you expected"
                       style={{ ...inputStyle(!!errors.description), resize: 'vertical' }}
                       onFocus={e => e.target.style.borderColor = '#6366F1'}
                       onBlur={e => e.target.style.borderColor = errors.description ? '#fca5a5' : '#e5e7eb'}
